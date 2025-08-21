@@ -11,11 +11,11 @@ class SubsetInfoCollector {
         this.writer = om.filesystems.filesDataManager().csvWriter();
         this.listData = {};
 
-        this.LIST_GRID_COLUMNS_LIST = ["Production", "Id"]; // Колонки грида справочников (чтобы добавить в файл, необходимо доработать скрипт)
+        this.LIST_GRID_COLUMNS_LIST = ["Element Count", "Production", "Id"]; // Колонки грида справочников (чтобы добавить в файл, необходимо доработать скрипт)
         this.SUBSET_GRID_COLUMNS_LIST = ENV.SUBSET_GRID_COLUMNS_LIST;
         this.TIME_PERIOD_GRIDS = ['Days', 'Weeks', 'Periods', 'Months', 'Quarters', 'Half Years', 'Years']; // Измерения времени (можно не трогать, несуществующие будут пропущены скриптом)
 
-        this.csvHeaders = ["List Name", "List ID", "Prod Status", "Subset", ...this.SUBSET_GRID_COLUMNS_LIST]; // Первая строка файла с заголовками. При добавлении новых полей следует также править getSubsetData
+        this.csvHeaders = ["List Name", "List ID", "List Element Count", "List Prod Status", "<--Subset Info-->", "Subset Name", ...this.SUBSET_GRID_COLUMNS_LIST]; // Первая строка файла с заголовками. При добавлении новых полей следует также править getSubsetData
 
         this.fileName = ENV.FILE_NAME;
         this.fileExtention = "csv"; // Расширение файла -- не менять!
@@ -46,8 +46,9 @@ class SubsetInfoCollector {
     getSubsetData(pivot, listName, systemrid = false) {
         const rowData = {
             "List Name": listName,
-            "List ID": systemrid ? "-" : this.listData[listName]["Id"],
-            "Prod Status": systemrid ? "-" : this.listData[listName]["Production"]
+            "List ID": systemrid ? "-" : Number(this.listData[listName]["Id"]),
+            "List Element Count": systemrid ? "-" : this.listData[listName]["Element Count"],
+            "List Prod Status": systemrid ? "-" : this.listData[listName]["Production"]
         }
 
         const generator = pivot.create().range().generator();
@@ -56,7 +57,7 @@ class SubsetInfoCollector {
             const rowLabels = chunk.rows();
             for (const rowLabelsGroup of rowLabels.all()) {
                 const rowName = rowLabelsGroup.first().name();
-                rowData["Subset"] = rowName;
+                rowData["Subset Name"] = rowName;
                 for (const cell of rowLabelsGroup.cells().all()) {
                     const colName = cell.columns().first().name();
                     rowData[colName] = cell.getValue();
