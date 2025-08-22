@@ -3,13 +3,13 @@
 
     Режим BACKUP предназначен для скачивания "резервной копии" данных продуктивных справочников. Результат работы скрипта - скачанный .txt файл с JSON-структурой.
 
-    Режим RESTORE предназначен для восстановления данных продуктивных сабсетов. Для этого необходимо передать JSON из скачанного в режиме BACKUP файла в параметр DATA.
+    Режим RESTORE предназначен для восстановления данных продуктивных сабсетов. Для этого необходимо передать JSON из скачанного в режиме BACKUP файла в параметр DUMP_DATA.
 
 */
 
 const ENV = {
     SCRIPT_MODE: "BACKUP", // BACKUP || RESTORE
-    DATA: {} // Обязательный параметр для режима RESTORE
+    DUMP_DATA: null // Обязательный параметр для режима RESTORE
 };
 
 class ProductionSubsetDataManager {
@@ -23,7 +23,7 @@ class ProductionSubsetDataManager {
         this.TIMESCALE_GRIDS = ['Days', 'Weeks', 'Periods', 'Months', 'Quarters', 'Half Years', 'Years']; // Измерения времени (можно не трогать, несуществующие будут пропущены скриптом)
         this.fileName = `model_${om.common.modelInfo().id()}_subsets_dump`;
         this.fileExtention = "txt"; // Расширение файла -- не менять!
-        this.DATA = ENV.DATA;
+        this.DATA = ENV.DUMP_DATA;
         this.actualLists = Object.keys(this.DATA);
         this.listsTab = om.lists.listsTab();
         this.writer = om.filesystems.filesDataManager().csvWriter();  
