@@ -17,7 +17,7 @@ const ENV = {
 	SET_VERSION_SUBSET_STATUS: true, // проставить Production статус всем сабсетам версий
 };
 
-class ProdStatusChanger {
+class ProductionStatusChanger {
 	constructor(ENV) {
 		this.lists = ENV.LISTS;
 		this.listsStatus = ENV.SET_PRODUCTION_STATUS;
