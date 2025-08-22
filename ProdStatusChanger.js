@@ -37,16 +37,22 @@ class ProdStatusChanger {
 		]; // Измерения времени (можно не трогать, несуществующие будут пропущены скриптом)
 
 		this.listsTab = om.lists.listsTab();
-		this.cb = om.common.createCellBuffer();
+		this.cb = om.common.createCellBuffer().canLoadCellsValues(false);
 	}
 
 	// Проставляет указанный статус справочникам
 	setListStatus() {
+		console.log(`[~] Получаю список пользовательских справочников.\n`);
 		const pivot = this.listsTab
 			.pivot()
 			.columnsFilter(this.listAttr)
 			.rowsFilter(this.lists);
 		const generator = pivot.create().range().generator();
+		console.log(
+			`[~] Присваиваю статус "${
+				this.listsStatus ? 'Production' : 'Non-Production'
+			}" пользовательским справочникам.\n`
+		);
 		for (const chunk of generator) {
 			const rowLabels = chunk.rows();
 			for (const rowLabelsGroup of rowLabels.all()) {
@@ -72,20 +78,42 @@ class ProdStatusChanger {
 
 	// Проставляет статус SET_PRODUCTION_STATUS справочникам LISTS, если активен флаг SET_ALL_SUBSET_STATUS
 	setListSubsetStatus() {
-		if (!this.listSubsetStatus) return;
+		if (!this.listSubsetStatus) {
+			console.log(
+				`[ i ] Присвоение статусов сабсетам пользовательских справочников не требуется.\n`
+			);
+			return;
+		}
+		console.log(
+			`[~] Присваиваю статус "${
+				this.listsStatus ? 'Production' : 'Non-Production'
+			}" сабсетам пользовательских справочников.\n`
+		);
 		for (const list of this.lists) {
-			const pivot = this.listsTab
-				.open(list)
-				.listSubsetTab()
-				.pivot()
-				.columnsFilter(this.listAttr);
-			this.setSubsetStatus(pivot, this.listsStatus);
+			try {
+				const pivot = this.listsTab
+					.open(list)
+					.listSubsetTab()
+					.pivot()
+					.columnsFilter(this.listAttr);
+				this.setSubsetStatus(pivot, this.listsStatus);
+			} catch {
+				console.log(`[ ! ] Справочник "${list}" не найден в модели.\n`);
+			}
 		}
 	}
 
 	// Проставляет статус SET_PRODUCTION_STATUS сабсетам версий, если активен флаг SET_VERSION_SUBSET_STATUS
 	setVersionSubsetStatus() {
-		if (!this.versionSubsetStatus) return;
+		if (!this.versionSubsetStatus) {
+			console.log(`[ i ] Присвоение статусов сабсетам версий не требуется.\n`);
+			return;
+		}
+		console.log(
+			`[~] Присваиваю статус "${
+				this.listsStatus ? 'Production' : 'Non-Production'
+			}" сабсетам версий.\n`
+		);
 		const pivot = om.versions
 			.versionSubsetsTab()
 			.pivot()
@@ -95,7 +123,15 @@ class ProdStatusChanger {
 
 	// Проставляет статус SET_PRODUCTION_STATUS сабсетам времени, если активен флаг SET_TIMESCALE_SUBSET_STATUS
 	setTimeSubsetStatus() {
-		if (!this.timeSubsetStatus) return;
+		if (!this.timeSubsetStatus) {
+			console.log(`[ i ] Присвоение статусов сабсетам времени не требуется.\n`);
+			return;
+		}
+		console.log(
+			`[~] Присваиваю статус "${
+				this.listsStatus ? 'Production' : 'Non-Production'
+			}" сабсетам времени.\n`
+		);
 		for (const item of this.TIME_PERIOD_GRIDS) {
 			try {
 				const pivot = om.times
@@ -108,10 +144,12 @@ class ProdStatusChanger {
 				continue;
 			}
 		}
+		``;
 	}
 
 	// Применяет все внесенные изменения (галки)
 	apply() {
+		console.log(`[~] Применяю изменения.\n`);
 		this.cb.apply();
 	}
 
