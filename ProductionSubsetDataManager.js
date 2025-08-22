@@ -8,7 +8,7 @@
 */
 
 const ENV = {
-    SCRIPT_MODE: "RESTORE", // BACKUP || RESTORE
+    SCRIPT_MODE: "BACKUP", // BACKUP || RESTORE
     DATA: {} // Обязательный параметр для режима RESTORE
 };
 
