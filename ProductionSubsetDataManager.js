@@ -24,7 +24,7 @@ class ProductionSubsetDataManager {
         this.fileName = `model_${om.common.modelInfo().id()}_subsets_dump`;
         this.fileExtention = "txt"; // Расширение файла -- не менять!
         this.DATA = ENV.DUMP_DATA;
-        this.actualLists = Object.keys(this.DATA);
+        this.actualLists = this.DATA ? Object.keys(this.DATA) : null;
         this.listsTab = om.lists.listsTab();
         this.writer = om.filesystems.filesDataManager().csvWriter();  
         this.localFileSystem = om.filesystems.local();  
@@ -215,15 +215,15 @@ class ProductionSubsetDataManager {
         const uniqueRows = this.getUniqueItemsList(listData);
 
         if (timeListType) {
-            pivot = om.times.timePeriodTab(listName).pivot().columnsFilter(listSubsets).rowsFilter(uniqueRows);
+            pivot = om.times.timePeriodTab(listName).pivot().columnsFilter(listSubsets)//.rowsFilter(uniqueRows);
         } else if (userListType) {
             try {
-                pivot = this.listsTab.open(listName).pivot().columnsFilter(listSubsets).rowsFilter(uniqueRows);
+                pivot = this.listsTab.open(listName).pivot().columnsFilter(listSubsets)//.rowsFilter(uniqueRows);
             } catch {
                 return
             }
         } else if (versionListType) {
-            pivot = om.versions.versionsTab().pivot().columnsFilter(listSubsets).rowsFilter(uniqueRows);
+            pivot = om.versions.versionsTab().pivot().columnsFilter(listSubsets)//.rowsFilter(uniqueRows);
         } else {
             this.print(`[ ! ] Ошибка, метод restoreListSubsetItems получил некорректный тип справочка.\n`);
             return;
@@ -234,11 +234,14 @@ class ProductionSubsetDataManager {
 			const rowLabels = chunk.rows();
 			for (const rowLabelsGroup of rowLabels.all()) {
                 const rowName = rowLabelsGroup.first().name();
+                console.log(`rowName - ${rowName}\n`)
                 for (const cell of rowLabelsGroup.cells().all()) {
                     if (!cell.isEditable()) continue;
                     const colName = cell.columns().first().name();
-                    if (cell.getValue() === "false" && this.DATA[listName][colName].includes(rowName)) {
-                        this.cb.set(cell, "true");
+                    console.log(`value - ${cell.getValue()}, includes - ${this.DATA[listName][colName].includes(rowName)}\n`)
+                    if (cell.getValue() === "false" && this.DATA[listName][colName].includes(rowName) ||
+                        cell.getValue() === "true" && !this.DATA[listName][colName].includes(rowName)) {
+                        this.cb.set(cell, cell.getValue() === "false");
                     }
                 }
 			}
