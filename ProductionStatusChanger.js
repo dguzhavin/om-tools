@@ -163,4 +163,4 @@ class ProductionStatusChanger {
 	}
 }
 
-new ProdStatusChanger(ENV).run();
+new ProductionStatusChanger(ENV).run();
