@@ -51,7 +51,7 @@ class ProductionSubsetDataManager {
 
     // Собирает данные сабсетов пользовательских справочников
     getListSubsets(listName) {
-        print(`[~] Получаю данные сабсетов пользовательских справочников...\n`);
+        print(`[~] Получаю данные сабсетов справочника "${listName}"...\n`);
         let status;
         const pivot = this.listsTab.open(listName).listSubsetTab().pivot().columnsFilter(this.SUBSET_GRID_COLUMN);
         const generator = pivot.create().range().generator();
