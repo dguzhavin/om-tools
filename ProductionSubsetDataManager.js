@@ -201,18 +201,12 @@ class ProductionSubsetDataManager {
         }        
     }
 
-    // Возвращает массив уникальных элементов справочника, включенных хотя бы в один продуктивный сабсет
-    getUniqueItemsList(data) {
-        return [...new Set(Object.values(data).flat())];
-    }
-
     // Задает значения нужных галок в буфере ячеек сабсетов по условиям
     restoreListSubsetItems({listName, userListType = null, timeListType = null, versionListType = null}) {
         let pivot;
         
         const listData = this.DATA[listName];
         const listSubsets = Object.keys(listData);
-        const uniqueRows = this.getUniqueItemsList(listData);
 
         if (timeListType) {
             pivot = om.times.timePeriodTab(listName).pivot().columnsFilter(listSubsets)//.rowsFilter(uniqueRows);
@@ -234,11 +228,9 @@ class ProductionSubsetDataManager {
 			const rowLabels = chunk.rows();
 			for (const rowLabelsGroup of rowLabels.all()) {
                 const rowName = rowLabelsGroup.first().name();
-                console.log(`rowName - ${rowName}\n`)
                 for (const cell of rowLabelsGroup.cells().all()) {
                     if (!cell.isEditable()) continue;
                     const colName = cell.columns().first().name();
-                    console.log(`value - ${cell.getValue()}, includes - ${this.DATA[listName][colName].includes(rowName)}\n`)
                     if (cell.getValue() === "false" && this.DATA[listName][colName].includes(rowName) ||
                         cell.getValue() === "true" && !this.DATA[listName][colName].includes(rowName)) {
                         this.cb.set(cell, cell.getValue() === "false");
@@ -258,7 +250,9 @@ class ProductionSubsetDataManager {
     // Восстанавливает данные сабсетов версий
     restoreVersionSubsets() {   
         this.print(`[~] Восстановление сабсетов версий.\n`)     
-        this.restoreListSubsetItems({listName: this.versionsListName, versionListType:true});
+        if (this.actualLists.includes(this.versionsListName)) {
+            this.restoreListSubsetItems({listName: this.versionsListName, versionListType:true});
+        }
     }
     
     // Восстанавливает данные сабсетов справочников времени
