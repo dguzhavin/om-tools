@@ -12,6 +12,11 @@
 3. [ProductionSubsetDataManager](https://github.com/dguzhavin/om-tools/blob/main/ProductionSubsetDataManager.js)
     Скрипт позволяет бэкапировать и восстанавливать **данные продуктивных сабсетов** пользовательских справочников, версий и времени.
 
+4. [ProductionSubsetDataChanger](https://github.com/dguzhavin/om-tools/blob/main/ProductionSubsetDataChanger.js)
+   Скрипт изменяет текущее содержимое на противополеженное  для первых 10 элементов всех справочникв для всех продуктивных сабсетов. Если элемент был включен в сабсет - скрипт его исключает, если не был включен - включает.
+
+
+
 
 ---
 
