@@ -1,179 +1,131 @@
-/*
-    Скрипт позволяет собрать информацию о всех имеющихся сабсетах модели в виде CSV файла.
-    В выгрузку попадают сабсеты:
-      - пользовательских справочников;
-      - версий;
-      - шкал времени.
-
-    Колонки файла и их содержание:
-      - List Name - название справочника;
-      - List ID - идентификатор справочника;
-      - List Element Count - количество элементов справочника;
-      - List Prod Status - Production статус справочника;
-      - <--Subset Info--> - разделитель, далее следует информация о сабсетах;
-      - Subset Name - название сабсета;
-      - далее следуют колонки с грида сабсетов, указанные в SUBSET_GRID_COLUMNS_LIST
-*/
-
 const ENV = {
-	SUBSET_GRID_COLUMNS_LIST: ['Element Count', 'Production', 'Id'], // Колонки грида сабсетов, которые необходимо добавить в репорт файл
-	FILE_NAME: 'report', // Название экспортируемого файла
-};
-
-class SubsetInfoCollector {
-	constructor(ENV) {
-		this.listsTab = om.lists.listsTab();
-		this.localFileSystem = om.filesystems.local();
-		this.writer = om.filesystems.filesDataManager().csvWriter();
-		this.listData = {};
-
-		this.LIST_GRID_COLUMNS_LIST = ['Element Count', 'Production', 'Id']; // Колонки грида справочников (чтобы добавить в файл, необходимо доработать скрипт)
-		this.SUBSET_GRID_COLUMNS_LIST = ENV.SUBSET_GRID_COLUMNS_LIST;
-		this.TIME_PERIOD_GRIDS = [
-			'Days',
-			'Weeks',
-			'Periods',
-			'Months',
-			'Quarters',
-			'Half Years',
-			'Years',
-		]; // Измерения времени (можно не трогать, несуществующие будут пропущены скриптом)
-
-		this.csvHeaders = [
-			'List Name',
-			'List ID',
-			'List Element Count',
-			'List Prod Status',
-			'<--Subset Info-->',
-			'Subset Name',
-			...this.SUBSET_GRID_COLUMNS_LIST,
-		]; // Первая строка файла с заголовками. При добавлении новых полей следует также править getSubsetData
-
-		this.fileName = ENV.FILE_NAME; // Название файла
-		this.fileExtention = 'csv'; // Расширение файла -- не менять!
-
-		this.writeFirstRow();
-	}
-
-	// Получает список пользовательских справочников
-	getLists() {
-		const pivot = this.listsTab
-			.pivot()
-			.columnsFilter(this.LIST_GRID_COLUMNS_LIST);
-		const generator = pivot.create().range().generator();
-		for (const chunk of generator) {
-			const rowLabels = chunk.rows();
-			for (const rowLabelsGroup of rowLabels.all()) {
-				const rowName = rowLabelsGroup.first().name();
-				this.listData[rowName] = {};
-				for (const cell of rowLabelsGroup.cells().all()) {
-					const colName = cell.columns().first().name();
-					this.listData[rowName][colName] = cell.getValue();
-				}
-			}
-		}
-	}
-
-	// Получает информацию о сабсетах полученного грида
-	getSubsetData(pivot, listName, systemrid = false) {
-		const rowData = {
-			'List Name': listName,
-			'List ID': systemrid ? '-' : Number(this.listData[listName]['Id']),
-			'List Element Count': systemrid
-				? '-'
-				: this.listData[listName]['Element Count'],
-			'List Prod Status': systemrid
-				? '-'
-				: this.listData[listName]['Production'],
-		};
-		const generator = pivot.create().range().generator();
-		for (const chunk of generator) {
-			const rowLabels = chunk.rows();
-			for (const rowLabelsGroup of rowLabels.all()) {
-				const rowName = rowLabelsGroup.first().name();
-				rowData['Subset Name'] = rowName;
-				for (const cell of rowLabelsGroup.cells().all()) {
-					const colName = cell.columns().first().name();
-					rowData[colName] = cell.getValue();
-				}
-				this.addRow(rowData);
-			}
-		}
-	}
-
-	// Записывает строку в файл
-	addRow(rowData) {
-		const outputRow = [];
-		for (const header of this.csvHeaders) {
-			outputRow.push(rowData[header]);
-		}
-		this.writer.writeRow(outputRow);
-	}
-
-	// Собирает информацию о сабсетах всех пользовательских справочников
-	getListSubsetData() {
-		Object.keys(this.listData).forEach((item) => {
-			const pivot = this.listsTab
-				.open(item)
-				.listSubsetTab()
-				.pivot()
-				.columnsFilter(this.SUBSET_GRID_COLUMNS_LIST);
-			this.getSubsetData(pivot, item);
-		});
-	}
-
-	// Получает информацию о сабсетах всех указанных периодов времени
-	getTimePeriodSubsets() {
-		for (const item of this.TIME_PERIOD_GRIDS) {
-			try {
-				const pivot = om.times
-					.timePeriodTab(item)
-					.subsetsTab()
-					.pivot()
-					.columnsFilter(this.SUBSET_GRID_COLUMNS_LIST);
-				this.getSubsetData(pivot, item, true);
-			} catch {
-				continue;
-			}
-		}
-	}
-
-	// Получает информацию о сабсетах версий
-	getVersionSubsets() {
-		const pivot = om.versions
-			.versionSubsetsTab()
-			.pivot()
-			.columnsFilter(this.SUBSET_GRID_COLUMNS_LIST);
-		this.getSubsetData(pivot, 'Versions', true);
-	}
-
-	// Записывает первую строку с заголовками в файл
-	writeFirstRow() {
-		this.writer.writeRow(this.csvHeaders);
-	}
-
-	// Сохраняет CSV файл и скачивает его
-	downloadCSV() {
-		this.writer.save(this.fileName);
-		const filePath = this.localFileSystem
-			.getPathObj(`${this.fileName}.${this.fileExtention}`)
-			.getPath();
-		const hash = this.localFileSystem.makeGlobalFile(
-			this.fileName,
-			this.fileExtention,
-			filePath
-		);
-		om.common.resultInfo().addFileHash(hash);
-	}
-
-	// Точка входа
-	run() {
-		this.getLists();
-		this.getListSubsetData();
-		this.getTimePeriodSubsets();
-		this.getVersionSubsets();
-		this.downloadCSV();
-	}
+    SUBSET_GRID_COLUMNS_LIST: ["Element Count", "Production", "Id"], // Колонки грида сабсетов, которые необходимо добавить в репорт файл
+    FILE_NAME: "report" // Название экспортируемого файла
 }
 
-new SubsetInfoCollector(ENV).run();
+class SubsetInfoCollector {
+
+    constructor(ENV) {
+        this.listsTab = om.lists.listsTab();
+        this.localFileSystem = om.filesystems.local();
+        this.writer = om.filesystems.filesDataManager().csvWriter();
+        this.listData = {};
+
+        this.LIST_GRID_COLUMNS_LIST = ["Top Level", "Element Count", "Production", "Id"]; // Колонки грида справочников (чтобы добавить в файл, необходимо доработать скрипт)
+        this.SUBSET_GRID_COLUMNS_LIST = ENV.SUBSET_GRID_COLUMNS_LIST;
+        this.TIME_PERIOD_GRIDS = ['Days', 'Weeks', 'Periods', 'Months', 'Quarters', 'Half Years', 'Years']; // Измерения времени (можно не трогать, несуществующие будут пропущены скриптом)
+
+        this.csvHeaders = ["List Name", "List ID", "Top Level", "List Element Count", "List Prod Status", "<--Subset Info-->", "Subset Name", ...this.SUBSET_GRID_COLUMNS_LIST]; // Первая строка файла с заголовками. При добавлении новых полей следует также править getSubsetData
+
+        this.fileName = ENV.FILE_NAME;
+        this.fileExtention = "csv"; // Расширение файла -- не менять!
+
+        this.writeFirstRow();
+    }
+
+    // Получает список пользовательских справочников
+    getLists() {
+        const pivot = this.listsTab.pivot().columnsFilter(this.LIST_GRID_COLUMNS_LIST);
+
+        const generator = pivot.create().range().generator();
+
+        for (const chunk of generator) {
+            const rowLabels = chunk.rows();
+            for (const rowLabelsGroup of rowLabels.all()) {
+                const rowName = rowLabelsGroup.first().name();
+                this.listData[rowName] = {};
+                for (const cell of rowLabelsGroup.cells().all()) {
+                    const colName = cell.columns().first().name();
+                    this.listData[rowName][colName] = cell.getValue();
+                }
+            }
+        }
+    }
+
+    // Получает информацию о сабсетах полученного грида 
+    getSubsetData(pivot, listName, systemGrid = false) {
+        const rowData = {
+            "List Name": listName,
+            "List ID": systemGrid ? "-" : Number(this.listData[listName]["Id"]),
+            "Top Level": systemGrid ? "-" : this.listData[listName]["Top Level"],
+            "List Element Count": systemGrid ? "-" : this.listData[listName]["Element Count"],
+            "List Prod Status": systemGrid ? "-" : this.listData[listName]["Production"]
+        }
+
+        const generator = pivot.create().range().generator();
+
+        for (const chunk of generator) {
+            const rowLabels = chunk.rows();
+            for (const rowLabelsGroup of rowLabels.all()) {
+                const rowName = rowLabelsGroup.first().name();
+                rowData["Subset Name"] = rowName;
+                for (const cell of rowLabelsGroup.cells().all()) {
+                    const colName = cell.columns().first().name();
+                    rowData[colName] = cell.getValue();
+                }
+                this.addRow(rowData);
+            }
+        }
+    }
+
+    addRow(rowData) {
+        const outputRow = [];
+
+        for (const header of this.csvHeaders) {
+            outputRow.push(rowData[header])
+        }
+        this.writer.writeRow(outputRow);
+    }
+
+    // Собирает информацию о сабсетах всех пользовательских справочников
+    getListSubsetData() {
+        Object.keys(this.listData).forEach(item => {
+            const pivot = this.listsTab.open(item).listSubsetTab().pivot().columnsFilter(this.SUBSET_GRID_COLUMNS_LIST);
+            this.getSubsetData(pivot, item);
+        })
+    }
+
+    // Получает информацию о сабсетах всех указанных периодов времени
+    getTimePeriodSubsets() {
+        for (const item of this.TIME_PERIOD_GRIDS) {
+            try {
+                const pivot = om.times.timePeriodTab(item).subsetsTab().pivot().columnsFilter(this.SUBSET_GRID_COLUMNS_LIST);
+                this.getSubsetData(pivot, item, true)
+            } catch {
+                continue;
+            }
+        }
+    }
+
+    // Получает информацию о сабсетах версий
+    getVersionSubsets() {
+        const pivot = om.versions.versionSubsetsTab().pivot().columnsFilter(this.SUBSET_GRID_COLUMNS_LIST);
+        this.getSubsetData(pivot, "Versions", true)
+    }
+
+    // Записывает первую строку с заголовками в файл
+    writeFirstRow() {
+        this.writer.writeRow(this.csvHeaders);
+    }
+
+    // Сохраняет CSV файл и скачивает его
+    downloadCSV() {
+        this.writer.save(this.fileName);
+
+        const filePath = this.localFileSystem.getPathObj(`${this.fileName}.${this.fileExtention}`).getPath();
+        const hash = this.localFileSystem.makeGlobalFile(this.fileName, this.fileExtention, filePath);
+
+        om.common.resultInfo().addFileHash(hash)
+    }
+
+    // Точка входа
+    run() {
+        this.getLists();
+        this.getListSubsetData();
+        this.getTimePeriodSubsets();
+        this.getVersionSubsets()
+        this.downloadCSV();
+    }
+}
+
+(new SubsetInfoCollector(ENV)).run()
