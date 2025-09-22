@@ -5,14 +5,15 @@
 
 1. [SubsetInfoCollector](https://github.com/dguzhavin/om-tools/blob/main/SubsetInfoCollector)
     Скрипт позволяет **собрать информацию** о всех имеющихся **сабсетах** модели в виде CSV файла.
+    Для удобного сравнения файлов можно использовать шаблон - [alcm-reports-analysis.xlsx](https://github.com/dguzhavin/om-tools/blob/main/alcm-reports-analysis.xlsx)
 
-2. [ProductionStatusChanger](https://github.com/dguzhavin/om-tools/blob/main/ProductionStatusChanger.js)
+3. [ProductionStatusChanger](https://github.com/dguzhavin/om-tools/blob/main/ProductionStatusChanger.js)
   Скрипт предназначен для того, чтобы помочь вам **автомазировать процесс проставления признака Production** в ходе тестирования процесса миграции ALCM.
 
-3. [ProductionSubsetDataManager](https://github.com/dguzhavin/om-tools/blob/main/ProductionSubsetDataManager.js)
+4. [ProductionSubsetDataManager](https://github.com/dguzhavin/om-tools/blob/main/ProductionSubsetDataManager.js)
     Скрипт позволяет бэкапировать и восстанавливать **данные продуктивных сабсетов** пользовательских справочников, версий и времени.
 
-4. [ProductionSubsetDataChanger](https://github.com/dguzhavin/om-tools/blob/main/ProductionSubsetDataChanger.js)
+5. [ProductionSubsetDataChanger](https://github.com/dguzhavin/om-tools/blob/main/ProductionSubsetDataChanger.js)
    Скрипт изменяет текущее содержимое (галку) всех продуктивных сабсетов на противоположное для первых 10 элементов всех справочникв.
 
 
