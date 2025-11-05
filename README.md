@@ -19,6 +19,9 @@
 6. [MulticubeCollector](https://github.com/dguzhavin/om-tools/blob/main/MulticubeCollector.js)
    Скрипт добавляет название всех мультикубов модели в указанный пользовательский справочник.
 
+7. [CubesSumCollector](https://github.com/dguzhavin/om-tools/blob/main/CubesSumCollector.js)
+   Скрипт собирает суммы по всем числовым кубам модели и выгружает в CSV файл.
+
 
 ---
 
