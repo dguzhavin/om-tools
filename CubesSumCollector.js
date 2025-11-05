@@ -1,12 +1,12 @@
 /**
- * Скрипт позволяет выгрузить CVS файл, в котором отражается сумма значений по всем ячейкам числовых кубов модели. 
-*/
+ * Скрипт позволяет выгрузить CVS файл, в котором отражается сумма значений по всем ячейкам числовых кубов модели.
+ */
 
 const ENV = {
 	FILE_NAME: 'file', // Имя выгружаемого файла без расширения
 };
 
-class CubesSumCollector {
+class MulticubeDataCollector {
 	constructor(ENV) {
 		this.multicubesTab = om.multicubes.multicubesTab();
 		this.writer = om.filesystems.filesDataManager().csvWriter();
@@ -16,21 +16,30 @@ class CubesSumCollector {
 		this.fileExtention = 'csv'; // Расширение файла -- не менять!
 		this.csvHeaders = ['Multicube', 'Cube', 'Sum'];
 
+		this.data = [];
+
 		this.writeFirstRow();
 	}
 
 	// Итерируется по мультикубам модели
 	getMulticubesInfo() {
 		const pivot = this.multicubesTab.pivot();
-		const generator = pivot.withoutValues().create().range().generator();
+		const generator = pivot
+			.withoutValues()
+			.create()
+			.range(0, -1, 0, 0)
+			.generator();
 
 		for (const chunk of generator) {
 			const rowLabels = chunk.rows();
 			for (const rowLabelsGroup of rowLabels.all()) {
 				const rowName = rowLabelsGroup.first().name();
+
 				this.getCubes(rowName);
+				// првоерить количество элементов в data - если больше 1000 (задавать в констр) - записывать чанками
 			}
 		}
+		this.writer.writeRows(this.data);
 	}
 
 	// Итерируется по кубам полученного мультикуба и получает по ним сумму
@@ -52,7 +61,8 @@ class CubesSumCollector {
 				const sum = this.getCubeSum(pivot, rowName);
 
 				if (sum != null) {
-					this.writer.writeRow([mcName, rowName, sum]);
+					// this.writer.writeRow([mcName, rowName, sum]);
+					this.data.push([mcName, rowName, sum]);
 				}
 			}
 		}
@@ -102,4 +112,4 @@ class CubesSumCollector {
 	}
 }
 
-new CubesSumCollector(ENV).run();
+new MulticubeDataCollector(ENV).run();
