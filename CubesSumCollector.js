@@ -6,7 +6,7 @@ const ENV = {
 	FILE_NAME: 'file', // Имя выгружаемого файла без расширения
 };
 
-class MulticubeDataCollector {
+class CubesSumCollector {
 	constructor(ENV) {
 		this.multicubesTab = om.multicubes.multicubesTab();
 		this.writer = om.filesystems.filesDataManager().csvWriter();
@@ -102,4 +102,4 @@ class MulticubeDataCollector {
 	}
 }
 
-new MulticubeDataCollector(ENV).run();
+new CubesSumCollector(ENV).run();
