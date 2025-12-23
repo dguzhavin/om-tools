@@ -1,0 +1,515 @@
+//core_regression_solver v1.1
+
+const ENV_from_script = om.environment.get('ENV');
+let AVAILABLE_REGRESSION_TYPES = ["LINEAR", "QUADRATIC"];
+
+if (!ENV_from_script) {
+    throw new Error('Ошибка в переменной окружения')
+};
+
+if (!ENV_from_script.DATA.NAME_MC) {
+    throw new Error('Не указан мультикуб')
+};
+
+if (!ENV_from_script.PARAMS.REGRESSION_TYPE) {
+    throw new Error('Не задан тип регрессии')
+};
+
+if (!AVAILABLE_REGRESSION_TYPES.includes(ENV_from_script.PARAMS.REGRESSION_TYPE)){
+    throw new Error('Задан недопустимый тип регрессии')
+};
+
+if (!ENV_from_script.PARAMS.PREDICTOR) {
+    throw new Error('Не задана независимая переменная (предиктор)')
+};
+
+if (!ENV_from_script.PARAMS.DEPENDANT) {
+    throw new Error('Не задана зависимая переменная')
+};
+
+if (!ENV_from_script.SOLVE_RESULT.MULTICUBE) {
+    throw new Error('Не задан мультикуб для записи результатов расчетов')
+};
+
+if (!ENV_from_script.SOLVE_RESULT.EQUATION) {
+    throw new Error('Не задан куб для записи уравнения регрессии')
+};
+
+if (ENV_from_script.SOLVE_RESULT.WRITE_STATISTICAL_INDICATORS == 'TRUE' && !ENV_from_script.SOLVE_RESULT.R_SQUARED) {
+    throw new Error('Не задан куб для записи к-та степени достоверности')
+};
+
+const ENV = {
+    DATA:{
+        NAME_MC: ENV_from_script.DATA.NAME_MC,
+        VIEW: ENV_from_script.DATA.VIEW,
+        FILTER: ENV_from_script.DATA.FILTER
+    },
+    PARAMS:{
+        REGRESSION_TYPE: ENV_from_script.PARAMS.REGRESSION_TYPE,    //LINEAR, QUADRATIC
+        //SOLVE_METHOD: "",   //SIMPLE - через формулы, LSM - метод МНК для Linear. LSM/GAUSS - для quadratic
+        PREDICTOR: ENV_from_script.PARAMS.PREDICTOR,     //пока доступен один куб, для варианта X1... Xn нужна реализация множественной регрессии
+        DEPENDANT: ENV_from_script.PARAMS.DEPENDANT,       //Y
+    },
+    SOLVE_RESULT:{
+        MULTICUBE: ENV_from_script.SOLVE_RESULT.MULTICUBE,
+        VIEW: ENV_from_script.SOLVE_RESULT.VIEW,
+        COEFFS: {
+            A: ENV_from_script.SOLVE_RESULT.COEFFS.A,
+            B: ENV_from_script.SOLVE_RESULT.COEFFS.B,
+            C: ENV_from_script.SOLVE_RESULT.COEFFS.C    //не нужен в линейной регрессии
+        },     //кубы для записи к-тов - a, b, c...
+        EQUATION: ENV_from_script.SOLVE_RESULT.EQUATION,  //текстовый куб для записи уравнения
+        WRITE_STATISTICAL_INDICATORS: ENV_from_script.SOLVE_RESULT.WRITE_STATISTICAL_INDICATORS,   //TRUE-FALSE для вычисления ssr, sse, R
+        R_SQUARED: ENV_from_script.SOLVE_RESULT.R_SQUARED
+    }
+};
+
+(function checkViewPivot(MC, View){     //функция для проверки пивота представления мк с данными
+    const multicubesTabmc = om.multicubes.multicubesTab();
+    const multicubeTabmc = multicubesTabmc.open(MC);
+
+    const pivotmc = multicubeTabmc.pivot(View);
+    const gridmc = pivotmc.create();
+
+    let filtersCount = gridmc.getDefinitionInfo().getPageSelectors().length;
+    if (filtersCount) {
+        throw new Error('Неверный пивот мультикуба - в фильтрах есть измерения');
+    }
+
+    let rowsArr = gridmc.getDefinitionInfo().getRowDimensions();
+    let rowsArrNames = rowsArr.map((elem) => {return elem.getDimensionEntity().name()});
+    if (rowsArrNames.includes("Cubes")) {
+        throw new Error('Неверный пивот мультикуба - в строках есть кубы')
+    };
+
+    let colsArr = gridmc.getDefinitionInfo().getColumnDimensions();
+    let colsArrNames = colsArr.map((elem) => {return elem.getDimensionEntity().name()});
+    if (colsArrNames.length > 1) {
+        throw new Error('Неверный пивот мультикуба - в колонках есть лишние измерения')
+    }
+})(ENV.DATA.NAME_MC, ENV.DATA.VIEW);
+
+(function checkViewResultPivot(MC, View){   //функция для проверки пивота представления мк с результатом
+    const multicubesTabmc = om.multicubes.multicubesTab();
+    const multicubeTabmc = multicubesTabmc.open(MC);
+
+    const pivotmc = multicubeTabmc.pivot(View);
+    const gridmc = pivotmc.create();
+
+    let filtersCount = gridmc.getDefinitionInfo().getPageSelectors().length;
+    if (filtersCount) {
+        throw new Error('Неверный пивот мультикуба результата - в фильтрах есть измерения');
+    }
+
+    let rowsCount = gridmc.getDefinitionInfo().getRowDimensions().length;
+    if (rowsCount > 1) {
+        throw new Error('Неверный пивот мультикуба результата - в строках есть лишние измерения')
+    };
+
+    let colsCount = gridmc.getDefinitionInfo().getColumnDimensions().length;
+    let colsArr = gridmc.getDefinitionInfo().getColumnDimensions().map((elem)=>{return elem.getDimensionEntity().name()})
+    if (colsArr.includes('Cubes')) {
+        throw new Error('Неверный пивот мультикуба результата - кубы должны быть в строках')
+    }
+})(ENV.SOLVE_RESULT.MULTICUBE, ENV.SOLVE_RESULT.VIEW);
+
+class Shouter {
+    _shout(msg) {
+        console.log(msg);
+        console.log("\n");
+
+        return this;
+    };
+
+    info(msg) {
+        om.common.requestInfo().setStatusMessage(msg);
+    };
+};
+
+let shouter = new Shouter();
+
+class Regression {
+    constructor(ENV){
+        this.multicube_data = ENV.DATA.NAME_MC;
+        this.multicube_data_view = ENV.DATA.VIEW;
+        this.predictor = ENV.PARAMS.PREDICTOR;
+        this.dependantVariable = ENV.PARAMS.DEPENDANT;
+        this.MCResult = ENV.SOLVE_RESULT.MULTICUBE;
+        this.MCResultView = ENV.SOLVE_RESULT.VIEW;
+        this.coeffsObj = ENV.SOLVE_RESULT.COEFFS;
+        this.equationRes = ENV.SOLVE_RESULT.EQUATION;
+        this.dataFilter = ENV.DATA.FILTER;
+        if (ENV.SOLVE_RESULT.WRITE_STATISTICAL_INDICATORS == 'TRUE') {
+            this.R = ENV.SOLVE_RESULT.R_SQUARED;
+        }
+    };
+    getGenerator(MC, View){
+        const generator = om.multicubes
+                            .multicubesTab()
+                            .open(MC)
+                            .pivot(View)
+                            .create()
+                            .range()
+                            .generator()
+        return generator;
+    };
+    getCoordinateOfColumn(MC, nameCube, View){
+        const generatorForColumns = om.multicubes
+                                        .multicubesTab()
+                                        .open(MC)
+                                        .pivot(View)
+                                        .create()
+                                        .range(0, 1, 0, -1)
+                                        .generator();
+        let indexOfColumn;
+        for (const chunk of generatorForColumns) {
+            chunk.columns().all().forEach((columnLabels, index) => {
+                if (columnLabels.first().name() == nameCube){
+                    indexOfColumn = index;
+                }
+            });
+        };
+        return indexOfColumn;
+    };
+    getValueOfCell(iterator, coordinateOfColumn){
+        return iterator.cells().all()[coordinateOfColumn].getValue()
+    };
+    getValueFromId(entityId){
+        return om.common.entitiesInfo().get(Number(entityId)).name()
+    };
+    getFirstValue(iterator) {
+        return iterator.first().name();
+    };
+    setValueOfCell(iterator, coordinateOfColumn, value){
+        return iterator.cells().all()[coordinateOfColumn].setValue(value)
+    };
+};
+
+class LinearRegression extends Regression{
+    #getDataFromMC(){
+        let MCGen = this.getGenerator(this.multicube_data, this.multicube_data_view);
+        let arr_x = [];
+        let arr_y = [];
+
+        let coordinateXcol = Number(this.getCoordinateOfColumn(this.multicube_data, this.predictor, this.multicube_data_view));
+        if (typeof coordinateXcol == 'undefined') {
+            throw new Error('Не удалось найти куб-предиктор')
+        };
+
+        let coordinateYcol = Number(this.getCoordinateOfColumn(this.multicube_data, this.dependantVariable, this.multicube_data_view));
+        if (typeof coordinateXcol == 'undefined') {
+            throw new Error('Не удалось найти куб с зависимой переменной')
+        };
+
+        if (this.dataFilter){
+            let coordinateFilter = Number(this.getCoordinateOfColumn(this.multicube_data, this.dataFilter, this.multicube_data_view));
+            for (const chunk of MCGen){
+                chunk.rows().all().forEach(rowLabels =>{
+                    let filter = this.getValueOfCell(rowLabels, coordinateFilter);
+                    
+                    if (filter == 'true') {
+                        let x =  this.getValueOfCell(rowLabels, coordinateXcol);
+                        arr_x.push(x);
+        
+                        let y = this.getValueOfCell(rowLabels, coordinateYcol);
+                        arr_y.push(y);
+                    }
+                })
+            };
+        } else {
+            for (const chunk of MCGen){
+                chunk.rows().all().forEach(rowLabels =>{
+                    let x =  this.getValueOfCell(rowLabels, coordinateXcol);
+                    arr_x.push(x);
+
+                    let y = this.getValueOfCell(rowLabels, coordinateYcol);
+                    arr_y.push(y);
+                })
+            };
+        };
+        return {
+            x: arr_x,
+            y: arr_y
+        };
+    };
+    #linearRegression(x, y) {
+        const n = x.length;
+        const meanX = x.reduce((a, b) => a + b) / n;
+        const meanY = y.reduce((a, b) => a + b) / n;
+    
+        // Вычисление коэффициентов
+        let numerator = 0;
+        let denominator = 0;
+        
+        for (let i = 0; i < n; i++) {
+            numerator += (x[i] - meanX) * (y[i] - meanY);
+            denominator += (x[i] - meanX) ** 2;
+        }
+        
+        const slope = numerator / denominator;
+        const intercept = meanY - slope * meanX;
+        
+        let solveOfLinearRegression = {
+            slope,      // a (угловой коэффициент)
+            intercept,  // b (свободный член)
+            predict: (x) => slope * x + intercept,
+            equation: `y = ${slope.toFixed(4)}x ${intercept >= 0 ? '+' : ''}${intercept.toFixed(4)}`
+        };
+
+        if(ENV.SOLVE_RESULT.WRITE_STATISTICAL_INDICATORS == "TRUE") {
+            let ssr = 0; // Общая сумма квадратов
+            let sse = 0; // Сумма квадратов ошибок
+            
+            for (let i = 0; i < n; i++) {
+                const prediction = slope * x[i] + intercept;
+                ssr += (prediction - meanY) ** 2;
+                sse += (y[i] - prediction) ** 2;
+            }
+            
+            let rSquared = ssr / (ssr + sse);
+
+            solveOfLinearRegression['R²'] = `${(rSquared * 100).toFixed(2)}%`;
+        };
+
+        return solveOfLinearRegression;
+    };
+    #setResultOfSolve(solve){
+        let genMCRes = this.getGenerator(this.MCResult, this.MCResultView);
+        for (const chunk of genMCRes){
+            chunk.rows().all().forEach(rowLabels =>{
+                if (this.getFirstValue(rowLabels) == this.equationRes) {
+                    this.setValueOfCell(rowLabels, 0, solve.equation)
+                };
+                if (ENV.SOLVE_RESULT.WRITE_STATISTICAL_INDICATORS == 'TRUE') {
+                    if (this.getFirstValue(rowLabels) == this.R) {
+                        this.setValueOfCell(rowLabels, 0, solve['R²'])
+                    }
+                };
+                if (this.getFirstValue(rowLabels) == this.coeffsObj.A) {
+                    this.setValueOfCell(rowLabels, 0, solve.slope)
+                };
+                if (this.getFirstValue(rowLabels) == this.coeffsObj.B) {
+                    this.setValueOfCell(rowLabels, 0, solve.intercept)
+                };
+            });
+        };
+    };
+    run(){
+        shouter.info(`Загрузка грида данных из источника`);
+        let data = this.#getDataFromMC();
+
+        shouter.info(`Расчет коэффициентов регрессии`);
+        let result = this.#linearRegression(data.x, data.y);
+
+        shouter.info(`Запись результатов расчета`);
+        this.#setResultOfSolve(result);
+
+        shouter._shout(result);
+    };
+};
+
+class QuadraticRegression extends Regression{
+    #solveLinearSystem(matrix, vector) {
+    // Простая реализация метода Гаусса для 3x3
+    const n = 3;
+    const augmented = matrix.map((row, i) => [...row, vector[i]]);
+    
+    // Прямой ход
+    for (let i = 0; i < n; i++) {
+        // Поиск максимального элемента в столбце
+        let maxRow = i;
+        for (let j = i + 1; j < n; j++) {
+            if (Math.abs(augmented[j][i]) > Math.abs(augmented[maxRow][i])) {
+                maxRow = j;
+            }
+        }
+        
+        // Перестановка строк
+        [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
+        
+        // Нормализация текущей строки
+        const pivot = augmented[i][i];
+        if (Math.abs(pivot) < 1e-10) {
+            throw new Error('Система вырождена');
+        };
+        
+        for (let j = i; j <= n; j++) {
+            augmented[i][j] /= pivot;
+        };
+        
+        // Исключение переменной из других строк
+        for (let j = 0; j < n; j++) {
+            if (j !== i) {
+                const factor = augmented[j][i];
+                for (let k = i; k <= n; k++) {
+                    augmented[j][k] -= factor * augmented[i][k];
+                }
+            }
+        }
+    };
+    // Извлечение решения
+    return augmented.map(row => row[n]);
+    };
+
+    #quadraticRegressionMatrix(x, y) {
+        const n = x.length;
+        
+        // Вычисление сумм
+        let Sx = 0, Sx2 = 0, Sx3 = 0, Sx4 = 0;
+        let Sy = 0, Sxy = 0, Sx2y = 0;
+        
+        for (let i = 0; i < n; i++) {
+            const xi = x[i];
+            const xi2 = xi * xi;
+            const xi3 = xi2 * xi;
+            const xi4 = xi3 * xi;
+            
+            Sx += xi;
+            Sx2 += xi2;
+            Sx3 += xi3;
+            Sx4 += xi4;
+            Sy += y[i];
+            Sxy += xi * y[i];
+            Sx2y += xi2 * y[i];
+        }
+        
+        // Матрица системы
+        const matrix = [
+            [n, Sx, Sx2],
+            [Sx, Sx2, Sx3],
+            [Sx2, Sx3, Sx4]
+        ];
+        
+        // Вектор правой части
+        const vector = [Sy, Sxy, Sx2y];
+        
+        // Решение системы
+        const [c, b, a] = this.#solveLinearSystem(matrix, vector);
+        
+        let solveOfQuadraticRegression = {
+            a, b, c,
+            predict: (x) => a * x * x + b * x + c,
+            equation: `y = ${a.toFixed(4)}x² ${b >= 0 ? '+' : ''}${b.toFixed(4)}x ${c >= 0 ? '+' : ''}${c.toFixed(4)}`
+        };
+
+        if(ENV.SOLVE_RESULT.WRITE_STATISTICAL_INDICATORS == "TRUE") {
+            const n = x.length;
+    
+            // Вычисление R²
+            let ssr = 0; // Объясненная сумма квадратов
+            let sse = 0; // Остаточная сумма квадратов
+            let meanY = 0;
+            
+            // Среднее y
+            for (let i = 0; i < n; i++) {
+                meanY += y[i];
+            }
+            meanY /= n;
+            
+            // Вычисление сумм квадратов
+            for (let i = 0; i < n; i++) {
+                const prediction = solveOfQuadraticRegression.predict(x[i]);
+                ssr += (prediction - meanY) ** 2;
+                sse += (y[i] - prediction) ** 2;
+            }
+            
+            const rSquared = ssr / (ssr + sse);
+            const adjRSquared = 1 - (1 - rSquared) * (n - 1) / (n - 3);
+
+            solveOfQuadraticRegression['R²'] = `${(rSquared * 100).toFixed(2)}%`;
+            solveOfQuadraticRegression['R²adj'] = `${(adjRSquared * 100).toFixed(2)}%`;
+        };
+
+        return solveOfQuadraticRegression;
+    };
+    #getDataFromMC(){
+        let MCGen = this.getGenerator(this.multicube_data, this.multicube_data_view);
+        let arr_x = [];
+        let arr_y = [];
+
+        let coordinateXcol = Number(this.getCoordinateOfColumn(this.multicube_data, this.predictor, this.multicube_data_view));
+        if (typeof coordinateXcol == 'undefined') {
+            throw new Error('Не удалось найти куб-предиктор')
+        };
+
+        let coordinateYcol = Number(this.getCoordinateOfColumn(this.multicube_data, this.dependantVariable, this.multicube_data_view));
+        if (typeof coordinateXcol == 'undefined') {
+            throw new Error('Не удалось найти куб с зависимой переменной')
+        };
+
+        if (this.dataFilter){
+            let coordinateFilter = Number(this.getCoordinateOfColumn(this.multicube_data, this.dataFilter, this.multicube_data_view));
+            for (const chunk of MCGen){
+                chunk.rows().all().forEach(rowLabels =>{
+                    let filter = this.getValueOfCell(rowLabels, coordinateFilter);
+
+                    if (filter == 'true') {
+                        let x =  this.getValueOfCell(rowLabels, coordinateXcol);
+                        arr_x.push(x);
+        
+                        let y = this.getValueOfCell(rowLabels, coordinateYcol);
+                        arr_y.push(y);
+                    }
+                })
+            };
+        } else {
+            for (const chunk of MCGen){
+                chunk.rows().all().forEach(rowLabels =>{
+                    let x =  this.getValueOfCell(rowLabels, coordinateXcol);
+                    arr_x.push(x);
+
+                    let y = this.getValueOfCell(rowLabels, coordinateYcol);
+                    arr_y.push(y);
+                })
+            };
+        };
+
+        return {
+            x: arr_x,
+            y: arr_y
+        };
+    };
+    #setResultOfSolve(solve){
+        let genMCRes = this.getGenerator(this.MCResult, this.MCResultView);
+        for (const chunk of genMCRes){
+            chunk.rows().all().forEach(rowLabels =>{
+                if (this.getFirstValue(rowLabels) == this.equationRes) {
+                    this.setValueOfCell(rowLabels, 0, solve.equation)
+                };
+                if (ENV.SOLVE_RESULT.WRITE_STATISTICAL_INDICATORS == 'TRUE') {
+                    if (this.getFirstValue(rowLabels) == this.R) {
+                        this.setValueOfCell(rowLabels, 0, solve['R²'])
+                    }
+                };
+                if (this.getFirstValue(rowLabels) == this.coeffsObj.A) {
+                    this.setValueOfCell(rowLabels, 0, solve.a)
+                };
+                if (this.getFirstValue(rowLabels) == this.coeffsObj.B) {
+                    this.setValueOfCell(rowLabels, 0, solve.b)
+                };
+                if (this.getFirstValue(rowLabels) == this.coeffsObj.C) {
+                    this.setValueOfCell(rowLabels, 0, solve.c)
+                };
+            });
+        };
+    };
+    run(){
+        shouter.info(`Загрузка грида данных из источника`);
+        let data = this.#getDataFromMC();
+
+        shouter.info(`Расчет коэффициентов регрессии`);
+        let result = this.#quadraticRegressionMatrix(data.x, data.y);
+
+        shouter.info(`Запись результатов расчета`);
+        this.#setResultOfSolve(result);
+
+        shouter._shout(result);
+    };
+};
+
+if (ENV.PARAMS.REGRESSION_TYPE == 'LINEAR') {
+    (new LinearRegression(ENV)).run();
+} else if (ENV.PARAMS.REGRESSION_TYPE == 'QUADRATIC') {
+    (new QuadraticRegression(ENV)).run();
+};
