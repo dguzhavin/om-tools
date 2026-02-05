@@ -22,6 +22,9 @@
 7. [CubesSumCollector](https://github.com/dguzhavin/om-tools/blob/main/CubesSumCollector.js)
    Скрипт собирает суммы по всем числовым кубам модели и выгружает в CSV файл.
 
+8. [Synthetic Sata Generator](https://github.com/dguzhavin/om-tools/blob/main/synthetic_data_generator.py)
+   Скрипт для генерации синтетических фактических данных для анализа/обучения моделей.
+
 
 ---
 
