@@ -25,6 +25,9 @@
 8. [Synthetic Sata Generator](https://github.com/dguzhavin/om-tools/blob/main/synthetic_data_generator.py)
    Скрипт для генерации синтетических фактических данных для анализа/обучения моделей.
 
+9. [py-sdk-probe](https://github.com/dguzhavin/om-tools/tree/main/py-sdk-probe)
+   Стенд, который проверяет все методы Python SDK Optimacros (`os_ws_sdk` 1.0) на тестовой модели, и [справочник](https://github.com/dguzhavin/om-tools/blob/main/py-sdk-probe/os_ws_sdk_reference.md) по реальному поведению SDK: форматы, баги, обходы.
+
 
 ---
 

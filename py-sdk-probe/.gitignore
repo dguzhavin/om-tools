@@ -1,0 +1,6 @@
+# секреты и результаты прогонов
+.env
+sdk_probe_files*/
+*.whl
+.venv/
+__pycache__/

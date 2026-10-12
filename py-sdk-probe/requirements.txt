@@ -1,0 +1,15 @@
+# Зависимости sdk_probe.py. Python 3.10+ (в сигнатурах SDK используется синтаксис `X | None`).
+#
+# Установка (wheel SDK положить рядом с этим файлом):
+#   python -m venv .venv
+#   .venv\Scripts\activate          # Windows
+#   source .venv/bin/activate       # Linux / macOS
+#   pip install -r requirements.txt
+#
+# os_ws_sdk в PyPI нет, ставится из wheel. Его собственные зависимости
+# (aiohttp и др.) pip подтянет из метаданных wheel автоматически.
+# Если имя файла другое, поправьте строку ниже.
+./os_ws_sdk-1.0-py3-none-any.whl
+
+pandas>=2.0
+python-dotenv>=1.0

@@ -1,0 +1,4015 @@
+{
+  "meta": {
+    "started_at": "2026-10-12T16:51:59",
+    "finished_at": "2026-10-12T16:55:30",
+    "ws_url": "https://ws125.optimacros.com",
+    "model": "PY_SDK ##1.0 (74174c947beb584189fb42acf112d69b)",
+    "python": "3.13.7",
+    "pandas": "3.0.6",
+    "sdk_version": null,
+    "skip_write": false,
+    "admin": true,
+    "groups": [
+      "multicube",
+      "catalog_write",
+      "multicube_write",
+      "permissions_write",
+      "admin"
+    ]
+  },
+  "api_surface": {
+    "connector": {
+      "download_backup": "async",
+      "download_dataframe": "async",
+      "download_file_data": "async",
+      "download_milticube_data": "async",
+      "get_catalogs": "async",
+      "get_dashboard_definition": "async",
+      "get_entity_types": "async",
+      "get_lp_hash": "async",
+      "get_model": "async",
+      "get_models": "async",
+      "get_multicubes": "async",
+      "get_optimizer_requests_table": "async",
+      "get_system_grid_data": "async",
+      "get_view_definition": "async",
+      "get_view_hash": "async",
+      "get_views": "async",
+      "get_ws_info": "async"
+    },
+    "workspace": {
+      "from_dict": "sync",
+      "from_json": "sync",
+      "get_model": "async",
+      "get_model_by_name": "async",
+      "get_models": "async",
+      "info": "async",
+      "schema": "sync",
+      "to_dict": "sync",
+      "to_json": "sync"
+    },
+    "model": {
+      "action_info": "async",
+      "backup": "async",
+      "change_formula": "async",
+      "change_list_permission": "async",
+      "change_macro_permission": "async",
+      "change_macros_permission": "async",
+      "change_mscros_permission": "async",
+      "change_multicube_permission": "async",
+      "change_uam": "async",
+      "change_version_permission": "async",
+      "create_catalogs": "async",
+      "delete_catalogs": "async",
+      "export_dashboard_multicube_links_grid": "async",
+      "export_lp_mapping": "async",
+      "from_dict": "sync",
+      "from_json": "sync",
+      "get_backup": "async",
+      "get_backup_info": "async",
+      "get_backup_list": "async",
+      "get_catalog": "async",
+      "get_catalog_by_name": "async",
+      "get_catalog_view_by_name": "async",
+      "get_catalog_views": "async",
+      "get_catalogs": "async",
+      "get_dashboard_multicube_links": "async",
+      "get_dashboard_multicubes": "async",
+      "get_formula": "async",
+      "get_id_multicube_by_name": "async",
+      "get_list_permissions": "async",
+      "get_list_uam": "async",
+      "get_macro_permissions": "async",
+      "get_macros_permissions": "async",
+      "get_model_user_info": "async",
+      "get_model_user_list": "async",
+      "get_multicube": "async",
+      "get_multicube_by_name": "async",
+      "get_multicube_permissions": "async",
+      "get_multicubes": "async",
+      "get_optimizer_request_fields": "async",
+      "get_optimizer_requests": "async",
+      "get_optimizer_requests_grid": "async",
+      "get_script_chain_history": "async",
+      "get_script_history": "async",
+      "get_script_info": "async",
+      "get_script_list": "async",
+      "get_uam": "async",
+      "get_user_permissions": "async",
+      "get_userpermisions": "async",
+      "get_version_permissions": "async",
+      "get_ws_user_info": "async",
+      "get_ws_user_list": "async",
+      "import_solution_mapping": "async",
+      "info": "sync",
+      "recalculate": "async",
+      "rename_catalogs": "async",
+      "restore": "async",
+      "run_script": "async",
+      "schema": "sync",
+      "start": "async",
+      "stop": "async",
+      "to_dict": "sync",
+      "to_json": "sync"
+    },
+    "multicube": {
+      "change_cell_value": "async",
+      "clear": "async",
+      "export_df": "async",
+      "export_file": "async",
+      "export_om_file": "async",
+      "export_to_multicube": "async",
+      "export_views": "async",
+      "from_dict": "sync",
+      "from_json": "sync",
+      "get_view_by_name": "async",
+      "get_views": "async",
+      "import_file": "async",
+      "import_from_multicube": "async",
+      "import_om_file": "async",
+      "info": "async",
+      "schema": "sync",
+      "to_dict": "sync",
+      "to_json": "sync"
+    },
+    "view": {
+      "export_df": "async",
+      "export_file": "async",
+      "export_om_file": "async",
+      "from_dict": "sync",
+      "from_json": "sync",
+      "import_file": "async",
+      "import_om_file": "async",
+      "info": "async",
+      "schema": "sync",
+      "to_dict": "sync",
+      "to_json": "sync"
+    },
+    "catalog": {
+      "add_elements": "async",
+      "clear": "async",
+      "create": "async",
+      "delete": "async",
+      "delete_elements": "async",
+      "export_catalog": "async",
+      "export_df": "async",
+      "export_file": "async",
+      "export_om_file": "async",
+      "export_views": "async",
+      "from_dict": "sync",
+      "from_json": "sync",
+      "get_elements": "async",
+      "get_view_by_name": "async",
+      "get_views": "async",
+      "import_catalog": "async",
+      "import_file": "async",
+      "info": "async",
+      "rename": "async",
+      "rename_elements": "async",
+      "schema": "sync",
+      "to_dict": "sync",
+      "to_json": "sync"
+    },
+    "catalog_view": {
+      "export_df": "async",
+      "export_file": "async",
+      "export_om_file": "async",
+      "from_dict": "sync",
+      "from_json": "sync",
+      "get_elements": "async",
+      "import_file": "async",
+      "info": "async",
+      "schema": "sync",
+      "to_dict": "sync",
+      "to_json": "sync"
+    },
+    "permission_change_manager": {
+      "change_list_permission": "async",
+      "change_macros_permission": "async",
+      "change_multicube_permission": "async",
+      "change_version_permission": "async",
+      "from_model": "sync"
+    }
+  },
+  "results": [
+    {
+      "group": "connect",
+      "call": "ConnectorManager.create(version=VERSION_9_200, token=***)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.api.v1.connector_v1.ConnectorV1",
+        "attrs": {}
+      },
+      "elapsed_s": 0.0
+    },
+    {
+      "group": "connect",
+      "call": "Workspace(url, connector)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.objects.workspace.Workspace",
+        "fields": {
+          "base_url": {
+            "type": "builtins.str",
+            "len": 28,
+            "preview": "https://ws125.optimacros.com"
+          }
+        }
+      },
+      "elapsed_s": 0.0
+    },
+    {
+      "group": "model",
+      "call": "ws.get_model(id='74174c947beb584189fb42acf112d69b')",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.objects.model.Model",
+        "fields": {
+          "base_url": {
+            "type": "builtins.str",
+            "len": 28,
+            "preview": "https://ws125.optimacros.com"
+          },
+          "model_name": {
+            "type": "builtins.str",
+            "len": 12,
+            "preview": "PY_SDK ##1.0"
+          },
+          "cell_count": {
+            "type": "builtins.int",
+            "value": 0
+          },
+          "memory": {
+            "type": "builtins.int",
+            "value": 92274688
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          },
+          "viewed_at": {
+            "type": "builtins.int",
+            "value": 1791813039
+          },
+          "tag_long_ids": {
+            "type": "builtins.list",
+            "len": 0,
+            "item_types": {},
+            "first": []
+          },
+          "workspace_folder_long_id": {
+            "type": "builtins.int",
+            "value": 118000000308
+          },
+          "auto_calc": {
+            "type": "builtins.bool",
+            "value": true
+          },
+          "last_sync_date": {
+            "type": "builtins.int",
+            "value": 1791265364
+          },
+          "created_at": {
+            "type": "builtins.int",
+            "value": 1789988526
+          },
+          "updated_at": {
+            "type": "builtins.int",
+            "value": 1791813002
+          },
+          "is_offline": {
+            "type": "builtins.bool",
+            "value": false
+          },
+          "serial": {
+            "type": "builtins.int",
+            "value": 84
+          },
+          "is_multi_threaded_storage_communication": {
+            "type": "builtins.bool",
+            "value": true
+          },
+          "storage_version": {
+            "type": "builtins.str",
+            "len": 12,
+            "preview": "9.200.164.73"
+          },
+          "storage_build_executable": {
+            "type": "builtins.str",
+            "len": 10,
+            "preview": "cxp_server"
+          },
+          "is_set_storage_profiler": {
+            "type": "builtins.bool",
+            "value": false
+          },
+          "is_private": {
+            "type": "builtins.bool",
+            "value": false
+          },
+          "owner": {
+            "type": "builtins.NoneType"
+          },
+          "storage_read_mode": {
+            "type": "builtins.str",
+            "len": 15,
+            "preview": "CONSISTENT_READ"
+          },
+          "macros_storage_read_mode": {
+            "type": "builtins.str",
+            "len": 15,
+            "preview": "CONSISTENT_READ"
+          },
+          "backup_storage_read_mode": {
+            "type": "builtins.str",
+            "len": 15,
+            "preview": "CONSISTENT_READ"
+          },
+          "storage_write_mode": {
+            "type": "builtins.str",
+            "len": 16,
+            "preview": "CONSISTENT_WRITE"
+          },
+          "model_version": {
+            "type": "builtins.str",
+            "len": 3,
+            "preview": "1.0"
+          },
+          "restore_mode": {
+            "type": "builtins.bool",
+            "value": false
+          },
+          "is_in_queue_on_restore": {
+            "type": "builtins.bool",
+            "value": false
+          },
+          "model_definition_serial_number": {
+            "type": "builtins.int",
+            "value": 0
+          }
+        }
+      },
+      "elapsed_s": 1.072
+    },
+    {
+      "group": "multicube",
+      "call": "mc.info()",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.dto.multicube_info.MulticubeInfo",
+        "fields": {
+          "base_url": {
+            "type": "builtins.NoneType"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 6,
+            "preview": "SRC_MC"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 102000000002
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          }
+        }
+      },
+      "elapsed_s": 0.0
+    },
+    {
+      "group": "multicube",
+      "call": "mc.get_views()",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.list",
+        "len": 1,
+        "item_types": {
+          "os_ws_sdk.objects.view.View": 1
+        },
+        "first": [
+          {
+            "type": "os_ws_sdk.objects.view.View",
+            "fields": {
+              "base_url": {
+                "type": "builtins.str",
+                "len": 28,
+                "preview": "https://ws125.optimacros.com"
+              },
+              "name": {
+                "type": "builtins.str",
+                "len": 13,
+                "preview": "SRC_MC view 1"
+              },
+              "id": {
+                "type": "builtins.int",
+                "value": 6000000004
+              },
+              "model_id": {
+                "type": "builtins.str",
+                "len": 32,
+                "preview": "74174c947beb584189fb42acf112d69b"
+              },
+              "multicube_id": {
+                "type": "builtins.int",
+                "value": 102000000002
+              }
+            }
+          }
+        ]
+      },
+      "elapsed_s": 0.664
+    },
+    {
+      "group": "multicube",
+      "call": "mc.get_views(start=0, count=1)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.list",
+        "len": 1,
+        "item_types": {
+          "os_ws_sdk.objects.view.View": 1
+        },
+        "first": [
+          {
+            "type": "os_ws_sdk.objects.view.View",
+            "fields": {
+              "base_url": {
+                "type": "builtins.str",
+                "len": 28,
+                "preview": "https://ws125.optimacros.com"
+              },
+              "name": {
+                "type": "builtins.str",
+                "len": 13,
+                "preview": "SRC_MC view 1"
+              },
+              "id": {
+                "type": "builtins.int",
+                "value": 6000000004
+              },
+              "model_id": {
+                "type": "builtins.str",
+                "len": 32,
+                "preview": "74174c947beb584189fb42acf112d69b"
+              },
+              "multicube_id": {
+                "type": "builtins.int",
+                "value": 102000000002
+              }
+            }
+          }
+        ]
+      },
+      "elapsed_s": 0.701
+    },
+    {
+      "group": "multicube",
+      "call": "mc.get_view_by_name('SRC_MC view 1')",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.objects.view.View",
+        "fields": {
+          "base_url": {
+            "type": "builtins.str",
+            "len": 28,
+            "preview": "https://ws125.optimacros.com"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 13,
+            "preview": "SRC_MC view 1"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 6000000004
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          },
+          "multicube_id": {
+            "type": "builtins.int",
+            "value": 102000000002
+          }
+        }
+      },
+      "elapsed_s": 0.685
+    },
+    {
+      "group": "multicube",
+      "call": "mc.get_view_by_name('__nope__')",
+      "kind": "read",
+      "expect_error": false,
+      "note": "None или исключение",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.694
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, format=DownloadFormat.CSV)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.482,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 555,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1",
+            "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, format=DownloadFormat.TXT)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.482,
+      "files": [
+        {
+          "name": "SRC_MC.txt",
+          "size": 555,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1",
+            "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, format=DownloadFormat.XLS)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.462,
+      "files": [
+        {
+          "name": "SRC_MC.xls",
+          "size": 4796,
+          "zip_entries": [
+            {
+              "name": "[Content_Types].xml",
+              "size": 1319
+            },
+            {
+              "name": "xl/workbook.xml",
+              "size": 314
+            },
+            {
+              "name": "xl/styles.xml",
+              "size": 777
+            },
+            {
+              "name": "xl/drawings/vmlDrawing1.vml",
+              "size": 501
+            },
+            {
+              "name": "xl/worksheets/sheet1.xml",
+              "size": 5865
+            },
+            {
+              "name": "xl/worksheets/_rels/sheet1.xml.rels",
+              "size": 524
+            },
+            {
+              "name": "xl/comments1.xml",
+              "size": 228
+            },
+            {
+              "name": "xl/sharedStrings.xml",
+              "size": 183
+            },
+            {
+              "name": "xl/_rels/workbook.xml.rels",
+              "size": 580
+            },
+            {
+              "name": "docProps/app.xml",
+              "size": 234
+            },
+            {
+              "name": "docProps/core.xml",
+              "size": 582
+            },
+            {
+              "name": "_rels/.rels",
+              "size": 605
+            }
+          ],
+          "kind": "zip/xlsx"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, format=DownloadFormat.XLSX)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.673,
+      "files": [
+        {
+          "name": "SRC_MC.xlsx",
+          "size": 4796,
+          "zip_entries": [
+            {
+              "name": "[Content_Types].xml",
+              "size": 1319
+            },
+            {
+              "name": "xl/workbook.xml",
+              "size": 314
+            },
+            {
+              "name": "xl/styles.xml",
+              "size": 777
+            },
+            {
+              "name": "xl/drawings/vmlDrawing1.vml",
+              "size": 501
+            },
+            {
+              "name": "xl/worksheets/sheet1.xml",
+              "size": 5865
+            },
+            {
+              "name": "xl/worksheets/_rels/sheet1.xml.rels",
+              "size": 524
+            },
+            {
+              "name": "xl/comments1.xml",
+              "size": 228
+            },
+            {
+              "name": "xl/sharedStrings.xml",
+              "size": 183
+            },
+            {
+              "name": "xl/_rels/workbook.xml.rels",
+              "size": 580
+            },
+            {
+              "name": "docProps/app.xml",
+              "size": 234
+            },
+            {
+              "name": "docProps/core.xml",
+              "size": 582
+            },
+            {
+              "name": "_rels/.rels",
+              "size": 605
+            }
+          ],
+          "kind": "zip/xlsx"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path)  # всё по умолчанию",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.655,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 555,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1",
+            "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, CSV, delimiter=',', decimal_separator=',')",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.584,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 555,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions,Cubes,Months",
+            ",,\"Jan 21\",\"Feb 21\",\"Mar 21\",\"Apr 21\",\"May 21\",\"Jun 21\",\"Jul 21\",\"Aug 21\",\"Sep 21\",\"Oct 21\",\"Nov 21\",\"Dec 21\"",
+            "Actual,куб_1,1,1,1,1,1,1,1,1,1,1,1,1",
+            "Actual,куб_2,2,2,2,2,2,2,2,2,2,2,2,2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, CSV, encoding=EncodingTypeExport.WINDOWS_1251)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.566,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 537,
+          "bom": false,
+          "encoding_guess": "cp1251",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1",
+            "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_om_file(path, format=DownloadFormatOM.OM_CSV)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.113,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 739,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": "';'",
+          "first_lines": [
+            "Versions;Months;куб_1;куб_2;куб_3;bool_cube",
+            "Actual;FY21;12;24;36;0",
+            "Forecast;FY21;12;24;36;0",
+            "Actual;YTD;1;2;3;0",
+            "Forecast;YTD;1;2;3;0"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_om_file(path, format=DownloadFormatOM.OM_TXT)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.572,
+      "files": [
+        {
+          "name": "SRC_MC.txt",
+          "size": 739,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": "';'",
+          "first_lines": [
+            "Versions;Months;куб_1;куб_2;куб_3;bool_cube",
+            "Actual;FY21;12;24;36;0",
+            "Forecast;FY21;12;24;36;0",
+            "Actual;YTD;1;2;3;0",
+            "Forecast;YTD;1;2;3;0"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_om_file(path, format=DownloadFormatOM.OM_ZIP)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.654,
+      "files": [
+        {
+          "name": "SRC_MC.gz",
+          "size": 390,
+          "zip_entries": [
+            {
+              "name": "SRC_MC--2026.10.12--01.52.csv",
+              "size": 739
+            }
+          ],
+          "zip_previews": {
+            "SRC_MC--2026.10.12--01.52.csv": [
+              "Versions;Months;куб_1;куб_2;куб_3;bool_cube",
+              "Actual;FY21;12;24;36;0",
+              "Forecast;FY21;12;24;36;0",
+              "Actual;YTD;1;2;3;0",
+              "Forecast;YTD;1;2;3;0"
+            ]
+          },
+          "kind": "zip/xlsx"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, filter_boolean_cube=[204000000008, 13000000003])",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.745,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 555,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1",
+            "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_df(filter_boolean_cube=[204000000008, 13000000003])",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          8,
+          1
+        ],
+        "columns": [
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+        ],
+        "dtypes": {
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_3;3;3;3;3;3;3;3;3;3;3;3;3"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;bool_cube;true;true;false;false;false;false;false;false;false;false;false;false"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          }
+        ]
+      },
+      "elapsed_s": 2.651,
+      "saved_dataframe": "results/020_mc_export_df_filter_boolean_cube_204000000008_13000000003.csv"
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, filter_boolean_cube=[204000000008, 20000000020])  # другое измерение",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 3.214,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 555,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1",
+            "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, filter_formula=[formula, 20000000020])  # другое измерение",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.485,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 133,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, filter_boolean_cube=[204000000008, 4000000009])  # другое измерение",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "error",
+      "error": {
+        "type": "builtins.AttributeError",
+        "message": "'NoneType' object has no attribute 'items'",
+        "traceback_tail": [
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/dataclasses_json/api.py\", line 70, in from_dict",
+          "    return _decode_dataclass(cls, kvs, infer_missing)",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/dataclasses_json/core.py\", line 163, in _decode_dataclass",
+          "    kvs = {decode_names.get(k, k): v for k, v in kvs.items()}",
+          "                                                 ^^^^^^^^^",
+          "AttributeError: 'NoneType' object has no attribute 'items'"
+        ]
+      },
+      "elapsed_s": 0.877,
+      "files": []
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, filter_formula=[formula, 4000000009])  # другое измерение",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "error",
+      "error": {
+        "type": "builtins.AttributeError",
+        "message": "'NoneType' object has no attribute 'items'",
+        "traceback_tail": [
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/dataclasses_json/api.py\", line 70, in from_dict",
+          "    return _decode_dataclass(cls, kvs, infer_missing)",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/dataclasses_json/core.py\", line 163, in _decode_dataclass",
+          "    kvs = {decode_names.get(k, k): v for k, v in kvs.items()}",
+          "                                                 ^^^^^^^^^",
+          "AttributeError: 'NoneType' object has no attribute 'items'"
+        ]
+      },
+      "elapsed_s": 0.764,
+      "files": []
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_om_file(path, boolean_cube_filter_long_id=204000000008)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.124,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 145,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": "';'",
+          "first_lines": [
+            "Versions;Months;куб_1;куб_2;куб_3;bool_cube",
+            "Actual;Jan 21;1;2;3;1",
+            "Forecast;Jan 21;1;2;3;1",
+            "Actual;Feb 21;1;2;3;1",
+            "Forecast;Feb 21;1;2;3;1"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path, filter_formula=[formula, dim_id])",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.296,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 163,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";",
+            "Actual;куб_1",
+            "Actual;куб_2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_df(filter_formula=[formula, dim_id])",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          8,
+          1
+        ],
+        "columns": [
+          ";"
+        ],
+        "dtypes": {
+          ";": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";": "Actual;куб_1"
+          },
+          {
+            ";": "Actual;куб_2"
+          },
+          {
+            ";": "Actual;куб_3"
+          },
+          {
+            ";": "Actual;bool_cube"
+          },
+          {
+            ";": "Forecast;куб_1"
+          }
+        ]
+      },
+      "elapsed_s": 2.378,
+      "saved_dataframe": "results/027_mc_export_df_filter_formula_formula_dim_id.csv"
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_om_file(path, filter_formula=formula)  # строка, не список",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.302,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 145,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": "';'",
+          "first_lines": [
+            "Versions;Months;куб_1;куб_2;куб_3;bool_cube",
+            "Actual;Jan 21;1;2;3;1",
+            "Forecast;Jan 21;1;2;3;1",
+            "Actual;Feb 21;1;2;3;1",
+            "Forecast;Feb 21;1;2;3;1"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_df()",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          8,
+          1
+        ],
+        "columns": [
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+        ],
+        "dtypes": {
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_3;3;3;3;3;3;3;3;3;3;3;3;3"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;bool_cube;true;true;false;false;false;false;false;false;false;false;false;false"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          }
+        ]
+      },
+      "elapsed_s": 2.545,
+      "saved_dataframe": "results/029_mc_export_df.csv"
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_df(dtype=str)  # kwargs уходят в pd.read_csv?",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          8,
+          1
+        ],
+        "columns": [
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+        ],
+        "dtypes": {
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_3;3;3;3;3;3;3;3;3;3;3;3;3"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;bool_cube;true;true;false;false;false;false;false;false;false;false;false;false"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          }
+        ]
+      },
+      "elapsed_s": 2.544,
+      "saved_dataframe": "results/030_mc_export_df_dtype_str_kwargs_уходят_в_pd_read_csv.csv"
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_df(sep=';')  # обход: явный разделитель для read_csv",
+      "kind": "read",
+      "expect_error": false,
+      "note": "Если kwargs уходят в read_csv, колонок станет больше одной",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          8,
+          14
+        ],
+        "columns": [
+          "Unnamed: 0",
+          "Unnamed: 1",
+          "Jan 21",
+          "Feb 21",
+          "Mar 21",
+          "Apr 21",
+          "May 21",
+          "Jun 21",
+          "Jul 21",
+          "Aug 21",
+          "Sep 21",
+          "Oct 21",
+          "Nov 21",
+          "Dec 21"
+        ],
+        "dtypes": {
+          "Unnamed: 0": "str",
+          "Unnamed: 1": "str",
+          "Jan 21": "str",
+          "Feb 21": "str",
+          "Mar 21": "str",
+          "Apr 21": "str",
+          "May 21": "str",
+          "Jun 21": "str",
+          "Jul 21": "str",
+          "Aug 21": "str",
+          "Sep 21": "str",
+          "Oct 21": "str",
+          "Nov 21": "str",
+          "Dec 21": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_1",
+            "Jan 21": "1",
+            "Feb 21": "1",
+            "Mar 21": "1",
+            "Apr 21": "1",
+            "May 21": "1",
+            "Jun 21": "1",
+            "Jul 21": "1",
+            "Aug 21": "1",
+            "Sep 21": "1",
+            "Oct 21": "1",
+            "Nov 21": "1",
+            "Dec 21": "1"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_2",
+            "Jan 21": "2",
+            "Feb 21": "2",
+            "Mar 21": "2",
+            "Apr 21": "2",
+            "May 21": "2",
+            "Jun 21": "2",
+            "Jul 21": "2",
+            "Aug 21": "2",
+            "Sep 21": "2",
+            "Oct 21": "2",
+            "Nov 21": "2",
+            "Dec 21": "2"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_3",
+            "Jan 21": "3",
+            "Feb 21": "3",
+            "Mar 21": "3",
+            "Apr 21": "3",
+            "May 21": "3",
+            "Jun 21": "3",
+            "Jul 21": "3",
+            "Aug 21": "3",
+            "Sep 21": "3",
+            "Oct 21": "3",
+            "Nov 21": "3",
+            "Dec 21": "3"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "bool_cube",
+            "Jan 21": "true",
+            "Feb 21": "true",
+            "Mar 21": "false",
+            "Apr 21": "false",
+            "May 21": "false",
+            "Jun 21": "false",
+            "Jul 21": "false",
+            "Aug 21": "false",
+            "Sep 21": "false",
+            "Oct 21": "false",
+            "Nov 21": "false",
+            "Dec 21": "false"
+          },
+          {
+            "Unnamed: 0": "Forecast",
+            "Unnamed: 1": "куб_1",
+            "Jan 21": "1",
+            "Feb 21": "1",
+            "Mar 21": "1",
+            "Apr 21": "1",
+            "May 21": "1",
+            "Jun 21": "1",
+            "Jul 21": "1",
+            "Aug 21": "1",
+            "Sep 21": "1",
+            "Oct 21": "1",
+            "Nov 21": "1",
+            "Dec 21": "1"
+          }
+        ]
+      },
+      "elapsed_s": 2.424,
+      "saved_dataframe": "results/031_mc_export_df_sep_обход_явный_разделитель_для_read_csv.csv"
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_df(delimiter=';')",
+      "kind": "read",
+      "expect_error": false,
+      "note": "delimiter — параметр экспорта или read_csv",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          8,
+          14
+        ],
+        "columns": [
+          "Unnamed: 0",
+          "Unnamed: 1",
+          "Jan 21",
+          "Feb 21",
+          "Mar 21",
+          "Apr 21",
+          "May 21",
+          "Jun 21",
+          "Jul 21",
+          "Aug 21",
+          "Sep 21",
+          "Oct 21",
+          "Nov 21",
+          "Dec 21"
+        ],
+        "dtypes": {
+          "Unnamed: 0": "str",
+          "Unnamed: 1": "str",
+          "Jan 21": "str",
+          "Feb 21": "str",
+          "Mar 21": "str",
+          "Apr 21": "str",
+          "May 21": "str",
+          "Jun 21": "str",
+          "Jul 21": "str",
+          "Aug 21": "str",
+          "Sep 21": "str",
+          "Oct 21": "str",
+          "Nov 21": "str",
+          "Dec 21": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_1",
+            "Jan 21": "1",
+            "Feb 21": "1",
+            "Mar 21": "1",
+            "Apr 21": "1",
+            "May 21": "1",
+            "Jun 21": "1",
+            "Jul 21": "1",
+            "Aug 21": "1",
+            "Sep 21": "1",
+            "Oct 21": "1",
+            "Nov 21": "1",
+            "Dec 21": "1"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_2",
+            "Jan 21": "2",
+            "Feb 21": "2",
+            "Mar 21": "2",
+            "Apr 21": "2",
+            "May 21": "2",
+            "Jun 21": "2",
+            "Jul 21": "2",
+            "Aug 21": "2",
+            "Sep 21": "2",
+            "Oct 21": "2",
+            "Nov 21": "2",
+            "Dec 21": "2"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_3",
+            "Jan 21": "3",
+            "Feb 21": "3",
+            "Mar 21": "3",
+            "Apr 21": "3",
+            "May 21": "3",
+            "Jun 21": "3",
+            "Jul 21": "3",
+            "Aug 21": "3",
+            "Sep 21": "3",
+            "Oct 21": "3",
+            "Nov 21": "3",
+            "Dec 21": "3"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "bool_cube",
+            "Jan 21": "true",
+            "Feb 21": "true",
+            "Mar 21": "false",
+            "Apr 21": "false",
+            "May 21": "false",
+            "Jun 21": "false",
+            "Jul 21": "false",
+            "Aug 21": "false",
+            "Sep 21": "false",
+            "Oct 21": "false",
+            "Nov 21": "false",
+            "Dec 21": "false"
+          },
+          {
+            "Unnamed: 0": "Forecast",
+            "Unnamed: 1": "куб_1",
+            "Jan 21": "1",
+            "Feb 21": "1",
+            "Mar 21": "1",
+            "Apr 21": "1",
+            "May 21": "1",
+            "Jun 21": "1",
+            "Jul 21": "1",
+            "Aug 21": "1",
+            "Sep 21": "1",
+            "Oct 21": "1",
+            "Nov 21": "1",
+            "Dec 21": "1"
+          }
+        ]
+      },
+      "elapsed_s": 2.45,
+      "saved_dataframe": "results/032_mc_export_df_delimiter.csv"
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_views(path)",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 3.084,
+      "files": [
+        {
+          "name": "SRC_MC view 1.csv",
+          "size": 555,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1",
+            "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube",
+      "call": "mc.export_file(path='не_существует/...')",
+      "kind": "read",
+      "expect_error": false,
+      "note": "Прогон 2: ошибки нет, файла в ожидаемом месте нет — проверяем, создалась ли папка",
+      "status": "ok",
+      "result": {
+        "type": "builtins.dict",
+        "len": 2,
+        "keys": [
+          "folder_exists_after",
+          "files"
+        ],
+        "items": {
+          "folder_exists_after": {
+            "type": "builtins.bool",
+            "value": false
+          },
+          "files": {
+            "type": "builtins.list",
+            "len": 0,
+            "item_types": {},
+            "first": []
+          }
+        }
+      },
+      "elapsed_s": 1.847
+    },
+    {
+      "group": "multicube",
+      "call": "asyncio.gather(mc.export_df(), mc.export_om_file(path))",
+      "kind": "read",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.dict",
+        "len": 2,
+        "keys": [
+          "rows_df",
+          "elapsed_parallel_s"
+        ],
+        "items": {
+          "rows_df": {
+            "type": "builtins.int",
+            "value": 8
+          },
+          "elapsed_parallel_s": {
+            "type": "builtins.float",
+            "value": 2.546
+          }
+        }
+      },
+      "elapsed_s": 2.546,
+      "files": [
+        {
+          "name": "SRC_MC.csv",
+          "size": 739,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": "';'",
+          "first_lines": [
+            "Versions;Months;куб_1;куб_2;куб_3;bool_cube",
+            "Actual;FY21;12;24;36;0",
+            "Forecast;FY21;12;24;36;0",
+            "Actual;YTD;1;2;3;0",
+            "Forecast;YTD;1;2;3;0"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.create_catalogs(names=['SDK_PROBE_165310_A', 'SDK_PROBE_165310_B'])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.957
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.get_catalog_by_name('SDK_PROBE_165310_A')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.objects.catalog.Catalog",
+        "fields": {
+          "base_url": {
+            "type": "builtins.str",
+            "len": 28,
+            "preview": "https://ws125.optimacros.com"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 18,
+            "preview": "SDK_PROBE_165310_A"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 101000000009
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          },
+          "unknown_things": {
+            "type": "builtins.dict",
+            "len": 15,
+            "keys": [
+              "displayNamePropertyEntityIndex",
+              "hasAttributeAccess",
+              "hasSelectiveAccess",
+              "canDefineDimensionEntities",
+              "parentHierarchyEntityLongId",
+              "topLevelMainHierarchyEntityLongId",
+              "sortOrder",
+              "isNumber",
+              "isFlat",
+              "propertiesLabelPage",
+              "propertiesInfo",
+              "itemCount",
+              "entityLongId",
+              "isReadOnly",
+              "subsetEntityLongIds"
+            ],
+            "items": {
+              "displayNamePropertyEntityIndex": {
+                "type": "builtins.int",
+                "value": -1
+              },
+              "hasAttributeAccess": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "hasSelectiveAccess": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "canDefineDimensionEntities": {
+                "type": "builtins.bool",
+                "value": true
+              },
+              "parentHierarchyEntityLongId": {
+                "type": "builtins.int",
+                "value": -1
+              },
+              "topLevelMainHierarchyEntityLongId": {
+                "type": "builtins.int",
+                "value": 101000000009
+              },
+              "sortOrder": {
+                "type": "builtins.str",
+                "len": 12,
+                "preview": "TOTALS_AFTER"
+              },
+              "isNumber": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "isFlat": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "propertiesLabelPage": {
+                "type": "builtins.dict",
+                "len": 19,
+                "keys": [
+                  "canDelete",
+                  "canInsertSibling",
+                  "entityCodes",
+                  "entityIds",
+                  "entityLongIds",
+                  "extraLongIds",
+                  "isAggregate",
+                  "isEditable",
+                  "isItemEditable",
+                  "labels",
+                  "parentEntityLongIds",
+                  "span",
+                  "styles",
+                  "treeLineSequences",
+                  "ownerEntityLongIds",
+                  "guid",
+                  "count",
+                  "start",
+                  "nestingCount"
+                ]
+              },
+              "propertiesInfo": {
+                "type": "builtins.list",
+                "len": 0,
+                "item_types": {}
+              },
+              "itemCount": {
+                "type": "builtins.int",
+                "value": 0
+              },
+              "entityLongId": {
+                "type": "builtins.int",
+                "value": 101000000009
+              },
+              "isReadOnly": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "subsetEntityLongIds": {
+                "type": "builtins.list",
+                "len": 0,
+                "item_types": {}
+              }
+            }
+          }
+        }
+      },
+      "elapsed_s": 0.727
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.get_catalog_by_name('SDK_PROBE_165310_B')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.objects.catalog.Catalog",
+        "fields": {
+          "base_url": {
+            "type": "builtins.str",
+            "len": 28,
+            "preview": "https://ws125.optimacros.com"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 18,
+            "preview": "SDK_PROBE_165310_B"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 101000000010
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          },
+          "unknown_things": {
+            "type": "builtins.dict",
+            "len": 15,
+            "keys": [
+              "displayNamePropertyEntityIndex",
+              "hasAttributeAccess",
+              "hasSelectiveAccess",
+              "canDefineDimensionEntities",
+              "parentHierarchyEntityLongId",
+              "topLevelMainHierarchyEntityLongId",
+              "sortOrder",
+              "isNumber",
+              "isFlat",
+              "propertiesLabelPage",
+              "propertiesInfo",
+              "itemCount",
+              "entityLongId",
+              "isReadOnly",
+              "subsetEntityLongIds"
+            ],
+            "items": {
+              "displayNamePropertyEntityIndex": {
+                "type": "builtins.int",
+                "value": -1
+              },
+              "hasAttributeAccess": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "hasSelectiveAccess": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "canDefineDimensionEntities": {
+                "type": "builtins.bool",
+                "value": true
+              },
+              "parentHierarchyEntityLongId": {
+                "type": "builtins.int",
+                "value": -1
+              },
+              "topLevelMainHierarchyEntityLongId": {
+                "type": "builtins.int",
+                "value": 101000000010
+              },
+              "sortOrder": {
+                "type": "builtins.str",
+                "len": 12,
+                "preview": "TOTALS_AFTER"
+              },
+              "isNumber": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "isFlat": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "propertiesLabelPage": {
+                "type": "builtins.dict",
+                "len": 19,
+                "keys": [
+                  "canDelete",
+                  "canInsertSibling",
+                  "entityCodes",
+                  "entityIds",
+                  "entityLongIds",
+                  "extraLongIds",
+                  "isAggregate",
+                  "isEditable",
+                  "isItemEditable",
+                  "labels",
+                  "parentEntityLongIds",
+                  "span",
+                  "styles",
+                  "treeLineSequences",
+                  "ownerEntityLongIds",
+                  "guid",
+                  "count",
+                  "start",
+                  "nestingCount"
+                ]
+              },
+              "propertiesInfo": {
+                "type": "builtins.list",
+                "len": 0,
+                "item_types": {}
+              },
+              "itemCount": {
+                "type": "builtins.int",
+                "value": 0
+              },
+              "entityLongId": {
+                "type": "builtins.int",
+                "value": 101000000010
+              },
+              "isReadOnly": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "subsetEntityLongIds": {
+                "type": "builtins.list",
+                "len": 0,
+                "item_types": {}
+              }
+            }
+          }
+        }
+      },
+      "elapsed_s": 0.684
+    },
+    {
+      "group": "catalog_write",
+      "call": "catalog.create(model_id, names=['SDK_PROBE_165310_C'])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.837
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.get_catalog_by_name('SDK_PROBE_165310_C')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.objects.catalog.Catalog",
+        "fields": {
+          "base_url": {
+            "type": "builtins.str",
+            "len": 28,
+            "preview": "https://ws125.optimacros.com"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 18,
+            "preview": "SDK_PROBE_165310_C"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 101000000011
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          },
+          "unknown_things": {
+            "type": "builtins.dict",
+            "len": 15,
+            "keys": [
+              "displayNamePropertyEntityIndex",
+              "hasAttributeAccess",
+              "hasSelectiveAccess",
+              "canDefineDimensionEntities",
+              "parentHierarchyEntityLongId",
+              "topLevelMainHierarchyEntityLongId",
+              "sortOrder",
+              "isNumber",
+              "isFlat",
+              "propertiesLabelPage",
+              "propertiesInfo",
+              "itemCount",
+              "entityLongId",
+              "isReadOnly",
+              "subsetEntityLongIds"
+            ],
+            "items": {
+              "displayNamePropertyEntityIndex": {
+                "type": "builtins.int",
+                "value": -1
+              },
+              "hasAttributeAccess": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "hasSelectiveAccess": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "canDefineDimensionEntities": {
+                "type": "builtins.bool",
+                "value": true
+              },
+              "parentHierarchyEntityLongId": {
+                "type": "builtins.int",
+                "value": -1
+              },
+              "topLevelMainHierarchyEntityLongId": {
+                "type": "builtins.int",
+                "value": 101000000011
+              },
+              "sortOrder": {
+                "type": "builtins.str",
+                "len": 12,
+                "preview": "TOTALS_AFTER"
+              },
+              "isNumber": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "isFlat": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "propertiesLabelPage": {
+                "type": "builtins.dict",
+                "len": 19,
+                "keys": [
+                  "canDelete",
+                  "canInsertSibling",
+                  "entityCodes",
+                  "entityIds",
+                  "entityLongIds",
+                  "extraLongIds",
+                  "isAggregate",
+                  "isEditable",
+                  "isItemEditable",
+                  "labels",
+                  "parentEntityLongIds",
+                  "span",
+                  "styles",
+                  "treeLineSequences",
+                  "ownerEntityLongIds",
+                  "guid",
+                  "count",
+                  "start",
+                  "nestingCount"
+                ]
+              },
+              "propertiesInfo": {
+                "type": "builtins.list",
+                "len": 0,
+                "item_types": {}
+              },
+              "itemCount": {
+                "type": "builtins.int",
+                "value": 0
+              },
+              "entityLongId": {
+                "type": "builtins.int",
+                "value": 101000000011
+              },
+              "isReadOnly": {
+                "type": "builtins.bool",
+                "value": false
+              },
+              "subsetEntityLongIds": {
+                "type": "builtins.list",
+                "len": 0,
+                "item_types": {}
+              }
+            }
+          }
+        }
+      },
+      "elapsed_s": 0.607
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.add_elements(names=['A', 'B', 'C'])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.438
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.add_elements(count=2)  # имена генерирует платформа",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.382
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.get_elements()  # после добавления",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 5,
+            "item_types": {
+              "builtins.list": 5
+            },
+            "first": [
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              },
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              },
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "elapsed_s": 1.727
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.rename_elements(names=['A_renamed'], elements_ids=[211000000001])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.756
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.delete_elements(ids=[211000000003])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.379
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.delete_elements(names=['B'])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.384
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.delete_elements(names=['__nope__'])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "Удаление несуществующего: тихо или ошибка",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.387
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.get_elements()  # после удаления/переименования",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 3,
+            "item_types": {
+              "builtins.list": 3
+            },
+            "first": [
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              },
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              },
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "elapsed_s": 1.629
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.export_catalog(destination_catalog_id=101000000010)",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.295
+    },
+    {
+      "group": "catalog_write",
+      "call": "c2.get_elements()  # после export_catalog",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 1,
+            "item_types": {
+              "builtins.list": 1
+            },
+            "first": [
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "elapsed_s": 1.506
+    },
+    {
+      "group": "catalog_write",
+      "call": "c2.clear()",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.768
+    },
+    {
+      "group": "catalog_write",
+      "call": "c2.import_catalog(source_catalog_id=101000000009)",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.256
+    },
+    {
+      "group": "catalog_write",
+      "call": "c2.get_elements()  # после import_catalog",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 1,
+            "item_types": {
+              "builtins.list": 1
+            },
+            "first": [
+              {
+                "type": "builtins.list",
+                "len": 8,
+                "item_types": {
+                  "builtins.str": 3,
+                  "builtins.NoneType": 2,
+                  "builtins.int": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "elapsed_s": 1.524
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.export_file(path, CSV)  # для кругового теста",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.268,
+      "files": [
+        {
+          "name": "SDK_PROBE_165310_A.csv",
+          "size": 800,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": "';'",
+          "first_lines": [
+            ";\"Item Name\";List;Parent;\"Hierarchy Level\";\"Dimension Rank\";Code;Debug;Id",
+            "A_renamed;A_renamed;SDK_PROBE_165310_A;;1;1;;\"{",
+            "    \"\"id\"\": 1,",
+            "    \"\"longId\"\": 211000000001,",
+            "    \"\"parentLongId\"\": null,"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.export_file(path, XLSX)  # для кругового теста",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.282,
+      "files": [
+        {
+          "name": "SDK_PROBE_165310_A.xlsx",
+          "size": 4657,
+          "zip_entries": [
+            {
+              "name": "[Content_Types].xml",
+              "size": 1319
+            },
+            {
+              "name": "xl/workbook.xml",
+              "size": 326
+            },
+            {
+              "name": "xl/styles.xml",
+              "size": 1036
+            },
+            {
+              "name": "xl/drawings/vmlDrawing1.vml",
+              "size": 501
+            },
+            {
+              "name": "xl/worksheets/sheet1.xml",
+              "size": 2641
+            },
+            {
+              "name": "xl/worksheets/_rels/sheet1.xml.rels",
+              "size": 524
+            },
+            {
+              "name": "xl/comments1.xml",
+              "size": 228
+            },
+            {
+              "name": "xl/sharedStrings.xml",
+              "size": 183
+            },
+            {
+              "name": "xl/_rels/workbook.xml.rels",
+              "size": 580
+            },
+            {
+              "name": "docProps/app.xml",
+              "size": 234
+            },
+            {
+              "name": "docProps/core.xml",
+              "size": 582
+            },
+            {
+              "name": "_rels/.rels",
+              "size": 605
+            }
+          ],
+          "kind": "zip/xlsx"
+        }
+      ]
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.clear()  # перед импортом: свой CSV-экспорт",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.772
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.import_file('SDK_PROBE_165310_A.csv')  # свой CSV-экспорт",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.927
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.get_elements()  # после импорта: свой CSV-экспорт",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 0,
+            "item_types": {},
+            "first": []
+          }
+        ]
+      },
+      "elapsed_s": 1.642
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.clear()  # перед импортом: свой XLSX-экспорт",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.735
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.import_file('SDK_PROBE_165310_A.xlsx')  # свой XLSX-экспорт",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.606
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.get_elements()  # после импорта: свой XLSX-экспорт",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 0,
+            "item_types": {},
+            "first": []
+          }
+        ]
+      },
+      "elapsed_s": 1.472
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.clear()  # перед импортом: простой CSV: заголовок Item Name + 3 имени",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.705
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.import_file('catalog_simple.csv')  # простой CSV: заголовок Item Name + 3 имени",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.844
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.get_elements()  # после импорта: простой CSV: заголовок Item Name + 3 имени",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 0,
+            "item_types": {},
+            "first": []
+          }
+        ]
+      },
+      "elapsed_s": 1.476
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.import_file(простой CSV повторно, encoding=UTF)  # дубли или upsert",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.827
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.get_elements()  # после повторного импорта",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.tuple",
+        "len": 2,
+        "item_types": {
+          "builtins.list": 2
+        },
+        "first": [
+          {
+            "type": "builtins.list",
+            "len": 8,
+            "item_types": {
+              "builtins.str": 8
+            },
+            "first": [
+              {
+                "type": "builtins.str",
+                "len": 9,
+                "preview": "Item Name"
+              },
+              {
+                "type": "builtins.str",
+                "len": 4,
+                "preview": "List"
+              },
+              {
+                "type": "builtins.str",
+                "len": 6,
+                "preview": "Parent"
+              }
+            ]
+          },
+          {
+            "type": "builtins.list",
+            "len": 0,
+            "item_types": {},
+            "first": []
+          }
+        ]
+      },
+      "elapsed_s": 1.538
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.import_file('нет_файла.csv')",
+      "kind": "write",
+      "expect_error": true,
+      "note": "",
+      "status": "expected_error",
+      "error": {
+        "type": "builtins.FileNotFoundError",
+        "message": "Файл ~/Desktop/DEV/OM/pySDK_test_all_methods/sdk_probe_files_run4/нет_файла.csv не найден",
+        "traceback_tail": [
+          "  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py\", line 507, in wait_for",
+          "    return await fut",
+          "           ^^^^^^^^^",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/os_ws_sdk/objects/catalog.py\", line 385, in import_file",
+          "    raise FileNotFoundError(f\"Файл {path} не найден\")",
+          "FileNotFoundError: Файл ~/Desktop/DEV/OM/pySDK_test_all_methods/sdk_probe_files_run4/нет_файла.csv не найден"
+        ]
+      },
+      "elapsed_s": 0.004
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.rename(['SDK_PROBE_165310_A_R'])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.784
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.rename_catalogs(['SDK_PROBE_165310_B_R'], [101000000010])",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.759
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.get_catalog(id1).info()  # имя после rename",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.dto.catalog_info.CatalogInfo",
+        "fields": {
+          "base_url": {
+            "type": "builtins.NoneType"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 20,
+            "preview": "SDK_PROBE_165310_A_R"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 101000000009
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          }
+        }
+      },
+      "elapsed_s": 0.66
+    },
+    {
+      "group": "catalog_write",
+      "call": "c1.info()  # старый объект после rename — кэш или свежие данные",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.dto.catalog_info.CatalogInfo",
+        "fields": {
+          "base_url": {
+            "type": "builtins.NoneType"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 18,
+            "preview": "SDK_PROBE_165310_A"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 101000000009
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          }
+        }
+      },
+      "elapsed_s": 0.0
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.delete_catalogs([999999999999])",
+      "kind": "write",
+      "expect_error": true,
+      "note": "",
+      "status": "expected_error",
+      "error": {
+        "type": "os_ws_sdk.common.exceptions.WorkspaceException",
+        "message": "(404, 'Каталог с id=999999999999 не найден')",
+        "traceback_tail": [
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/os_ws_sdk/objects/model.py\", line 1712, in delete_catalogs",
+          "    [await self.get_catalog(id) async for id in async_gen(ids)]",
+          "     ^^^^^^^^^^^^^^^^^^^^^^^^^^",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/os_ws_sdk/objects/model.py\", line 1652, in get_catalog",
+          "    raise WorkspaceException(404, f\"Каталог с id={id} не найден\")",
+          "os_ws_sdk.common.exceptions.WorkspaceException: (404, 'Каталог с id=999999999999 не найден')"
+        ]
+      },
+      "elapsed_s": 0.659
+    },
+    {
+      "group": "catalog_write",
+      "call": "catalog.delete()  # уборка 101000000009",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.604
+    },
+    {
+      "group": "catalog_write",
+      "call": "model.delete_catalogs([101000000010, 101000000011])  # уборка",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.059
+    },
+    {
+      "group": "multicube_write",
+      "call": "model.get_multicube_by_name('DEST_MC')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "os_ws_sdk.objects.multicube.Multicube",
+        "fields": {
+          "base_url": {
+            "type": "builtins.str",
+            "len": 28,
+            "preview": "https://ws125.optimacros.com"
+          },
+          "name": {
+            "type": "builtins.str",
+            "len": 7,
+            "preview": "DEST_MC"
+          },
+          "id": {
+            "type": "builtins.int",
+            "value": 102000000003
+          },
+          "model_id": {
+            "type": "builtins.str",
+            "len": 32,
+            "preview": "74174c947beb584189fb42acf112d69b"
+          }
+        }
+      },
+      "elapsed_s": 0.632
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.export_om_file(path)  # сохранить данные",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.157,
+      "files": [
+        {
+          "name": "DEST_MC.csv",
+          "size": 759,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": "';'",
+          "first_lines": [
+            "Versions;Months;куб_1;куб_2;куб_3",
+            "Actual;FY21;120;240;360",
+            "Forecast;FY21;120;240;360",
+            "Actual;YTD;10;20;30",
+            "Forecast;YTD;10;20;30"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.export_file(path, CSV)  # сохранить данные",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 2.474,
+      "files": [
+        {
+          "name": "DEST_MC.csv",
+          "size": 451,
+          "bom": false,
+          "encoding_guess": "utf-8",
+          "delimiter_guess": null,
+          "first_lines": [
+            "",
+            "Versions;Cubes;Months",
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"",
+            "Actual;куб_1;10;10;10;10;10;10;10;10;10;10;10;10",
+            "Actual;куб_2;20;20;20;20;20;20;20;20;20;20;20;20"
+          ],
+          "kind": "text"
+        }
+      ]
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.export_df()  # строк до",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          6,
+          1
+        ],
+        "columns": [
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+        ],
+        "dtypes": {
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_1;10;10;10;10;10;10;10;10;10;10;10;10"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_2;20;20;20;20;20;20;20;20;20;20;20;20"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_3;30;30;30;30;30;30;30;30;30;30;30;30"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_1;10;10;10;10;10;10;10;10;10;10;10;10"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_2;20;20;20;20;20;20;20;20;20;20;20;20"
+          }
+        ]
+      },
+      "elapsed_s": 2.495,
+      "saved_dataframe": "results/078_dst_export_df_строк_до.csv"
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.clear()",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.895
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.export_df()  # строк после clear",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          6,
+          1
+        ],
+        "columns": [
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+        ],
+        "dtypes": {
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_1;0;0;0;0;0;0;0;0;0;0;0;0"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_2;0;0;0;0;0;0;0;0;0;0;0;0"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_3;0;0;0;0;0;0;0;0;0;0;0;0"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_1;0;0;0;0;0;0;0;0;0;0;0;0"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_2;0;0;0;0;0;0;0;0;0;0;0;0"
+          }
+        ]
+      },
+      "elapsed_s": 2.43,
+      "saved_dataframe": "results/080_dst_export_df_строк_после_clear.csv"
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.import_om_file('DEST_MC.csv')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.749
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.export_df()  # строк после import_om_file",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          6,
+          1
+        ],
+        "columns": [
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+        ],
+        "dtypes": {
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_1;10;10;10;10;10;10;10;10;10;10;10;10"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_2;20;20;20;20;20;20;20;20;20;20;20;20"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_3;30;30;30;30;30;30;30;30;30;30;30;30"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_1;10;10;10;10;10;10;10;10;10;10;10;10"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_2;20;20;20;20;20;20;20;20;20;20;20;20"
+          }
+        ]
+      },
+      "elapsed_s": 2.351,
+      "saved_dataframe": "results/082_dst_export_df_строк_после_import_om_file.csv"
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.import_file('DEST_MC.csv')  # обычный CSV грида",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.054
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.import_om_file(файл не ОМ-формата)",
+      "kind": "write",
+      "expect_error": false,
+      "note": "Как SDK реагирует на неверный формат: ошибка или тихий частичный импорт",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.769
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.change_cell_value",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "skipped",
+      "reason": "не заданы OM_TEST_CELL_VALUE / _CUBE_ID / _DIMENSION_ID"
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.import_from_multicube(102000000002)",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.357
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.export_df()  # после import_from_multicube",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          6,
+          1
+        ],
+        "columns": [
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\""
+        ],
+        "dtypes": {
+          ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Actual;куб_3;3;3;3;3;3;3;3;3;3;3;3;3"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_1;1;1;1;1;1;1;1;1;1;1;1;1"
+          },
+          {
+            ";;\"Jan 21\";\"Feb 21\";\"Mar 21\";\"Apr 21\";\"May 21\";\"Jun 21\";\"Jul 21\";\"Aug 21\";\"Sep 21\";\"Oct 21\";\"Nov 21\";\"Dec 21\"": "Forecast;куб_2;2;2;2;2;2;2;2;2;2;2;2;2"
+          }
+        ]
+      },
+      "elapsed_s": 2.554,
+      "saved_dataframe": "results/087_dst_export_df_после_import_from_multicube.csv"
+    },
+    {
+      "group": "multicube_write",
+      "call": "src.export_to_multicube(102000000003)",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 1.398
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.clear()  # восстановление",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.774
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.import_om_file('DEST_MC.csv')  # восстановление",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.732
+    },
+    {
+      "group": "multicube_write",
+      "call": "dst.export_df(sep=';')  # проверка восстановления",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          6,
+          14
+        ],
+        "columns": [
+          "Unnamed: 0",
+          "Unnamed: 1",
+          "Jan 21",
+          "Feb 21",
+          "Mar 21",
+          "Apr 21",
+          "May 21",
+          "Jun 21",
+          "Jul 21",
+          "Aug 21",
+          "Sep 21",
+          "Oct 21",
+          "Nov 21",
+          "Dec 21"
+        ],
+        "dtypes": {
+          "Unnamed: 0": "str",
+          "Unnamed: 1": "str",
+          "Jan 21": "int64",
+          "Feb 21": "int64",
+          "Mar 21": "int64",
+          "Apr 21": "int64",
+          "May 21": "int64",
+          "Jun 21": "int64",
+          "Jul 21": "int64",
+          "Aug 21": "int64",
+          "Sep 21": "int64",
+          "Oct 21": "int64",
+          "Nov 21": "int64",
+          "Dec 21": "int64"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_1",
+            "Jan 21": "10",
+            "Feb 21": "10",
+            "Mar 21": "10",
+            "Apr 21": "10",
+            "May 21": "10",
+            "Jun 21": "10",
+            "Jul 21": "10",
+            "Aug 21": "10",
+            "Sep 21": "10",
+            "Oct 21": "10",
+            "Nov 21": "10",
+            "Dec 21": "10"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_2",
+            "Jan 21": "20",
+            "Feb 21": "20",
+            "Mar 21": "20",
+            "Apr 21": "20",
+            "May 21": "20",
+            "Jun 21": "20",
+            "Jul 21": "20",
+            "Aug 21": "20",
+            "Sep 21": "20",
+            "Oct 21": "20",
+            "Nov 21": "20",
+            "Dec 21": "20"
+          },
+          {
+            "Unnamed: 0": "Actual",
+            "Unnamed: 1": "куб_3",
+            "Jan 21": "30",
+            "Feb 21": "30",
+            "Mar 21": "30",
+            "Apr 21": "30",
+            "May 21": "30",
+            "Jun 21": "30",
+            "Jul 21": "30",
+            "Aug 21": "30",
+            "Sep 21": "30",
+            "Oct 21": "30",
+            "Nov 21": "30",
+            "Dec 21": "30"
+          },
+          {
+            "Unnamed: 0": "Forecast",
+            "Unnamed: 1": "куб_1",
+            "Jan 21": "10",
+            "Feb 21": "10",
+            "Mar 21": "10",
+            "Apr 21": "10",
+            "May 21": "10",
+            "Jun 21": "10",
+            "Jul 21": "10",
+            "Aug 21": "10",
+            "Sep 21": "10",
+            "Oct 21": "10",
+            "Nov 21": "10",
+            "Dec 21": "10"
+          },
+          {
+            "Unnamed: 0": "Forecast",
+            "Unnamed: 1": "куб_2",
+            "Jan 21": "20",
+            "Feb 21": "20",
+            "Mar 21": "20",
+            "Apr 21": "20",
+            "May 21": "20",
+            "Jun 21": "20",
+            "Jul 21": "20",
+            "Aug 21": "20",
+            "Sep 21": "20",
+            "Oct 21": "20",
+            "Nov 21": "20",
+            "Dec 21": "20"
+          }
+        ]
+      },
+      "elapsed_s": 2.457,
+      "saved_dataframe": "results/091_dst_export_df_sep_проверка_восстановления.csv"
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_multicube_permission(102000000002, 110000000001, 'read')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 3.072
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_multicube_permission(102000000002, 110000000001, 'READ')  # регистр, повтор",
+      "kind": "write",
+      "expect_error": false,
+      "note": "Тот же уровень повторно: True/False?",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.192
+    },
+    {
+      "group": "permissions_write",
+      "call": "model.change_multicube_permission(102000000002, 110000000001, 'none')  # откат",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.023
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_list_permission(101000000004, 110000000001, 'read')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.043
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_list_permission(101000000004, 110000000001, 'READ')  # регистр, повтор",
+      "kind": "write",
+      "expect_error": false,
+      "note": "Тот же уровень повторно: True/False?",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 1.917
+    },
+    {
+      "group": "permissions_write",
+      "call": "model.change_list_permission(101000000004, 110000000001, 'none')  # откат",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 1.983
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_version_permission(107000000002, 110000000001, 'read')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.248
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_version_permission(107000000002, 110000000001, 'READ')  # регистр, повтор",
+      "kind": "write",
+      "expect_error": false,
+      "note": "Тот же уровень повторно: True/False?",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.161
+    },
+    {
+      "group": "permissions_write",
+      "call": "model.change_version_permission(107000000002, 110000000001, 'none')  # откат",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.233
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_macros_permission(117000000001, 110000000001, 'read')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.054
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_macros_permission(117000000001, 110000000001, 'READ')  # регистр, повтор",
+      "kind": "write",
+      "expect_error": false,
+      "note": "Тот же уровень повторно: True/False?",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.052
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_macros_permission(117000000001, 110000000001, 'none')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "Прогон 3: отвергнуто через model.*; проверяем менеджер",
+      "status": "error",
+      "error": {
+        "type": "os_ws_sdk.common.exceptions.WorkspaceException",
+        "message": "(400, 'permission для макроса должен быть одним из: true, false, write, read, none')",
+        "traceback_tail": [
+          "    enabled = self._normalize_action_permission(permission)",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/os_ws_sdk/objects/permission_change_manager.py\", line 330, in _normalize_action_permission",
+          "    raise WorkspaceException(",
+          "    ...<3 lines>...",
+          "    )",
+          "os_ws_sdk.common.exceptions.WorkspaceException: (400, 'permission для макроса должен быть одним из: true, false, write, read, none')"
+        ]
+      },
+      "elapsed_s": 0.003
+    },
+    {
+      "group": "permissions_write",
+      "call": "permissions.change_macros_permission(117000000001, 110000000001, 'false')",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 1.967
+    },
+    {
+      "group": "permissions_write",
+      "call": "model.change_macros_permission(117000000001, 110000000001, False)  # откат через bool",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 1.999
+    },
+    {
+      "group": "permissions_write",
+      "call": "change_multicube_permission(102000000002, 110000000001, 'admin')  # неверное значение",
+      "kind": "write",
+      "expect_error": true,
+      "note": "",
+      "status": "expected_error",
+      "error": {
+        "type": "os_ws_sdk.common.exceptions.WorkspaceException",
+        "message": "(400, 'permission должен быть одним из: write, read, none')",
+        "traceback_tail": [
+          "    normalized_permission = self._normalize_module_permission(permission)",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/os_ws_sdk/objects/permission_change_manager.py\", line 312, in _normalize_module_permission",
+          "    raise WorkspaceException(",
+          "    ...<2 lines>...",
+          "    )",
+          "os_ws_sdk.common.exceptions.WorkspaceException: (400, 'permission должен быть одним из: write, read, none')"
+        ]
+      },
+      "elapsed_s": 0.0
+    },
+    {
+      "group": "permissions_write",
+      "call": "change_multicube_permission(102000000002, 999999999999, 'read')  # нет роли",
+      "kind": "write",
+      "expect_error": true,
+      "note": "",
+      "status": "expected_error",
+      "error": {
+        "type": "os_ws_sdk.common.exceptions.WorkspaceException",
+        "message": "(404, 'Роль с id=999999999999 не найдена в матрице доступов')",
+        "traceback_tail": [
+          "    )",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/os_ws_sdk/objects/permission_change_manager.py\", line 248, in _get_current_access",
+          "    raise WorkspaceException(",
+          "    ...<2 lines>...",
+          "    )",
+          "os_ws_sdk.common.exceptions.WorkspaceException: (404, 'Роль с id=999999999999 не найдена в матрице доступов')"
+        ]
+      },
+      "elapsed_s": 0.907
+    },
+    {
+      "group": "permissions_write",
+      "call": "model.change_macro_permission(117000000001, 110000000001, True)  # bool вместо строки",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.064
+    },
+    {
+      "group": "permissions_write",
+      "call": "model.change_mscros_permission(117000000001, 110000000001, False)  # алиас с опечаткой, откат",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 2.558
+    },
+    {
+      "group": "permissions_write",
+      "call": "model.get_macro_permissions(117000000001)  # итог после отката",
+      "kind": "write",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          1,
+          3
+        ],
+        "columns": [
+          "rowEntityLongId",
+          "rowLabel",
+          "SDK_PROBE_ROLE"
+        ],
+        "dtypes": {
+          "rowEntityLongId": "int64",
+          "rowLabel": "str",
+          "SDK_PROBE_ROLE": "str"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            "rowEntityLongId": "117000000001",
+            "rowLabel": "scr1",
+            "SDK_PROBE_ROLE": "none"
+          }
+        ]
+      },
+      "elapsed_s": 1.047,
+      "saved_dataframe": "results/110_model_get_macro_permissions_117000000001_итог_после_отката.csv"
+    },
+    {
+      "group": "admin",
+      "call": "model.recalculate()",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 0.674
+    },
+    {
+      "group": "admin",
+      "call": "model.backup()",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.NoneType"
+      },
+      "elapsed_s": 0.0
+    },
+    {
+      "group": "admin",
+      "call": "model.get_backup_list()  # после backup()",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "pandas.DataFrame",
+        "shape": [
+          3,
+          11
+        ],
+        "columns": [
+          "rowEntityLongId",
+          "rowLabel",
+          "User",
+          "Description",
+          "Date & Time",
+          "File Size, MB",
+          "Memory, GB",
+          "Comments",
+          "Model Version",
+          "Model Version Comment",
+          "Id"
+        ],
+        "dtypes": {
+          "rowEntityLongId": "int64",
+          "rowLabel": "str",
+          "User": "str",
+          "Description": "str",
+          "Date & Time": "str",
+          "File Size, MB": "float64",
+          "Memory, GB": "float64",
+          "Comments": "str",
+          "Model Version": "str",
+          "Model Version Comment": "str",
+          "Id": "int64"
+        },
+        "index": "pandas.RangeIndex",
+        "head": [
+          {
+            "rowEntityLongId": "41000048355",
+            "rowLabel": "#48355",
+            "User": "user01@example.com",
+            "Description": "Background backup",
+            "Date & Time": "2026-10-12 13:42:53",
+            "File Size, MB": "0.136",
+            "Memory, GB": "0.086",
+            "Comments": "",
+            "Model Version": "1.0",
+            "Model Version Comment": "",
+            "Id": "41000048355"
+          },
+          {
+            "rowEntityLongId": "41000047329",
+            "rowLabel": "#47329",
+            "User": "user01@example.com",
+            "Description": "Background backup",
+            "Date & Time": "2026-09-23 08:09:26",
+            "File Size, MB": "0.124",
+            "Memory, GB": "0.075",
+            "Comments": "",
+            "Model Version": "1.0",
+            "Model Version Comment": "",
+            "Id": "41000047329"
+          },
+          {
+            "rowEntityLongId": "41000047250",
+            "rowLabel": "#47250",
+            "User": "user01@example.com",
+            "Description": "Background backup",
+            "Date & Time": "2026-09-21 11:32:16",
+            "File Size, MB": "0.124",
+            "Memory, GB": "0.073",
+            "Comments": "",
+            "Model Version": "1.0",
+            "Model Version Comment": "",
+            "Id": "41000047250"
+          }
+        ]
+      },
+      "elapsed_s": 1.148,
+      "saved_dataframe": "results/113_model_get_backup_list_после_backup.csv"
+    },
+    {
+      "group": "admin",
+      "call": "model.stop()",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 1.683
+    },
+    {
+      "group": "admin",
+      "call": "model.info().is_offline  # тот же объект после stop",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "Кэшируется ли info()",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 0.0
+    },
+    {
+      "group": "admin",
+      "call": "ws.get_model(id).info().is_offline  # свежий объект",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 0.937
+    },
+    {
+      "group": "admin",
+      "call": "model.stop()  # повторно, ждём False",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": false
+      },
+      "elapsed_s": 6.651
+    },
+    {
+      "group": "admin",
+      "call": "mc.export_df() на остановленной модели",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "error",
+      "error": {
+        "type": "builtins.AttributeError",
+        "message": "'NoneType' object has no attribute 'items'",
+        "traceback_tail": [
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/dataclasses_json/api.py\", line 70, in from_dict",
+          "    return _decode_dataclass(cls, kvs, infer_missing)",
+          "  File \"~/Desktop/DEV/OM/pySDK_test_all_methods/venv/lib/python3.13/site-packages/dataclasses_json/core.py\", line 163, in _decode_dataclass",
+          "    kvs = {decode_names.get(k, k): v for k, v in kvs.items()}",
+          "                                                 ^^^^^^^^^",
+          "AttributeError: 'NoneType' object has no attribute 'items'"
+        ]
+      },
+      "elapsed_s": 0.598
+    },
+    {
+      "group": "admin",
+      "call": "model.start()",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 22.634
+    },
+    {
+      "group": "admin",
+      "call": "model.start()  # повторно, на онлайн-модели",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "ok",
+      "result": {
+        "type": "builtins.bool",
+        "value": true
+      },
+      "elapsed_s": 0.751
+    },
+    {
+      "group": "admin",
+      "call": "model.restore()",
+      "kind": "admin",
+      "expect_error": false,
+      "note": "",
+      "status": "skipped",
+      "reason": "OM_TEST_RESTORE=0"
+    }
+  ]
+}
