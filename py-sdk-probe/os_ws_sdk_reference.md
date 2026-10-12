@@ -1,57 +1,54 @@
 # os_ws_sdk 1.0: как SDK работает на самом деле
 
-Справочник для технической команды ATOMS по Python SDK Optimacros (`os_ws_sdk` 1.0, Workspace 9.200).
-Официальная документация описывает, как SDK задуман. Здесь записано, как он ведёт себя на живом
-Workspace: что возвращает каждый метод, в каком виде, сколько длится, где падает и чем отличается
-от документации.
+Официальная документация к Python SDK Optimacros рассказывает, как SDK задуман. Мы захотели знать,
+как он себя ведёт на живом Workspace, и прогнали через стенд все публичные методы. Здесь собрано то,
+что получилось: что возвращает каждый метод, в каком формате, сколько времени занимает, где падает
+и в чём расходится с документацией.
 
-**Как получены данные.** Стенд `sdk_probe.py` вызвал все публичные методы SDK на тестовой модели
-`PY_SDK ##1.0` (ws125, storage 9.200.164.73) в четыре прогона 12.10.2026: чтение, запись с откатом,
-управление моделью. Около 500 вызовов, отчёты `report.json` каждого прогона лежат рядом со стендом.
-Окружение: Python 3.13.7, pandas 3.0.6, macOS.
+Версии: `os_ws_sdk` 1.0, Workspace 9.200 (storage 9.200.164.73), Python 3.13, pandas 3.0, macOS.
+На Windows стенд пока не запускали.
 
-## Как читать
+Стенд, отчёты и тестовые настройки лежат в репозитории
+[om-tools/py-sdk-probe](https://github.com/dguzhavin/om-tools/tree/main/py-sdk-probe). Прогонов было
+четыре, 12 октября 2026, почти 700 вызовов на тестовой модели `PY_SDK ##1.0`: сначала только чтение,
+потом запись с откатом изменений, потом остановка и запуск модели. Сырые результаты каждого прогона
+лежат в [reports/](https://github.com/dguzhavin/om-tools/tree/main/py-sdk-probe/reports), их удобно
+открывать, когда нужен точный текст ошибки или полный список колонок.
 
-| Метка | Что значит |
-|---|---|
-| **[стенд]** | Проверено вызовом на реальном Workspace |
-| **[код]** | Проверено по исходному коду wheel, на стенде не воспроизводилось |
-| **[док]** | Только из официальной документации |
-| **[?]** | Предположение по косвенным признакам, нужна проверка |
+Всё, что написано ниже, мы видели своими глазами на сервере. Если вывод сделан по исходному коду SDK
+или это догадка, так и сказано в тексте. Модель маленькая (три мультикуба по сотне ячеек), поэтому
+время в таблицах показывает накладные расходы API. Скорость на больших объёмах мы не мерили.
 
-Если [док] и [стенд] расходятся, верен [стенд]. Тестовая модель маленькая (3 мультикуба, 90–120
-ячеек), поэтому время вызовов показывает накладные расходы API, а не скорость на больших объёмах.
+## Сначала главное
 
----
+Если прочитать только этот раздел, вот что сэкономит больше всего времени:
 
-## 0. Коротко: что нужно знать до первого скрипта
+1. `mc.export_df()` и `view.export_df()` сломаны и возвращают DataFrame из одной колонки. Лечится
+   одним аргументом: `await mc.export_df(sep=";")`.
+2. `catalog.import_file()` не добавляет элементы в справочник. Ошибки нет, справочник остаётся пустым.
+   Элементы создаём через `add_elements`.
+3. `export_om_file` работает только у мультикубов и их вью. У справочника он отвечает 404.
+4. Если папки для экспорта нет, SDK молча ничего не делает: ни файла, ни ошибки.
+5. Когда объект не найден, одни методы возвращают `None`, другие бросают исключение. Таблица ниже,
+   в разделе про общее поведение.
+6. Права на макрос нельзя снять строкой `"none"`, только `False`.
+7. Исходный код скрипта достаётся через `get_script_info(id)`, колонка `Macros`. В заметках
+   раньше было написано, что такого метода нет. Есть.
+8. Все формулы модели приходят одним запросом из системного грида `CUBES_GRID`. Вызывать
+   `get_formula` в цикле не нужно.
+9. `model.backup()` ничего не делает: возвращается мгновенно, нового бэкапа в списке нет.
 
-1. **`mc.export_df()` и `view.export_df()` сломаны.** Возвращают DataFrame из одной колонки.
-   Обход: `await mc.export_df(sep=";")`. Подробности — в разделе 5.
-2. **`catalog.import_file()` не добавляет элементы.** Ошибки нет, справочник остаётся пустым,
-   с любым из проверенных форматов файла. Элементы создавайте через `add_elements`.
-3. **`export_om_file` работает только для мультикубов и их вью.** У справочника и его вью он падает с 404.
-4. **Экспорт в несуществующую папку ничего не делает и не сообщает об этом.** Создавайте папку сами.
-5. **«Не найдено» обрабатывается по-разному:** одни методы возвращают `None`, другие бросают исключение.
-   Таблица — в разделе 2.
-6. **Права на макрос нельзя снять значением `'none'`** — SDK отвергает его на клиенте. Используйте `False`.
-7. **Исходный код скрипта доступен:** `get_script_info(id)`, колонка `Macros`.
-8. **Все формулы модели — одним запросом** через системный грид `CUBES_GRID`, колонка `Formula`.
-   `get_formula` в цикле не нужен.
-9. **`model.backup()` ничего не делает:** возвращается мгновенно, новый бэкап не появляется.
+## Установка и подключение
 
----
-
-## 1. Установка и подключение
-
-SDK распространяется только wheel-файлом, в PyPI его нет. Python 3.10+.
+В PyPI пакета нет, ставим из wheel. Нужен Python 3.10 или новее. Готовый
+[requirements.txt](https://github.com/dguzhavin/om-tools/blob/main/py-sdk-probe/requirements.txt)
+есть в репозитории, wheel кладётся рядом с ним.
 
 ```bash
 pip install ./os_ws_sdk-1.0-py3-none-any.whl pandas python-dotenv
 ```
 
-Зависимости wheel (aiohttp, dataclasses_json и др.) pip ставит сам. Версия пакета через
-`importlib.metadata.version("os_ws_sdk")` — `"1.0"` **[стенд]**.
+Свои зависимости (aiohttp, dataclasses_json и прочее) wheel подтянет сам.
 
 ```python
 import asyncio, sys
@@ -70,18 +67,19 @@ if sys.platform.startswith("win"):
 asyncio.run(main())
 ```
 
-- `WsVersion` содержит только `VERSION_9_200` **[стенд]**.
-- `ConnectorManager.create` и `Workspace(...)` в сеть не ходят, ошибка в токене или URL проявится
-  на первом запросе **[стенд]**.
-- Логгер SDK `os_ws_sdk.logging_sdk.logger` без хендлеров: его сообщения видны только после
-  `logging.basicConfig(...)` **[код]**.
-- На Windows ставим `WindowsSelectorEventLoopPolicy`, как в тестах самого SDK **[код]**. На Windows
-  стенд не запускался.
+Что стоит знать про подключение:
+
+- В `WsVersion` есть только `VERSION_9_200`.
+- `ConnectorManager.create` и `Workspace(...)` в сеть не ходят. Неверный токен или URL всплывут
+  на первом настоящем запросе.
+- У логгера SDK (`os_ws_sdk.logging_sdk.logger`) нет своих хендлеров. Его сообщения появятся
+  в консоли, только если в скрипте вызван `logging.basicConfig(...)`.
+- Политику event loop для Windows ставим так же, как это сделано в тестах самого SDK.
 
 ### Импорты
 
-Импорт из корня пакета не работает: `from os_ws_sdk import ScriptRunType` (как в документации),
-`ScriptStatus`, `Workspace`, `ConnectorManager` — все дают `AttributeError` **[стенд]**. Только полные пути:
+Импортировать из корня пакета нельзя. `from os_ws_sdk import ScriptRunType` из документации,
+как и `ScriptStatus`, `Workspace`, `ConnectorManager`, падает с `AttributeError`. Рабочие пути такие:
 
 | Имя | Модуль |
 |---|---|
@@ -99,142 +97,152 @@ asyncio.run(main())
 | `PermissionGridExporter`, `PermissionGridData` | `os_ws_sdk.objects.permission_grid_exporter` |
 | `UamManager`, `UamGridData` | `os_ws_sdk.objects.uam_manager` |
 
-Все пути проверены импортом **[стенд]**.
-
 ### Значения перечислений
 
-| Enum | Значения **[стенд]** |
+| Enum | Значения |
 |---|---|
 | `DownloadFormat` | `CSV="csv"`, `TXT="txt"`, `XLS="xls"`, `XLSX="xlsx"` |
 | `DownloadFormatOM` | `OM_CSV="csv"`, `OM_TXT="txt"`, `OM_ZIP="gz"` |
-| `EncodingTypeExport` | 8 значений: `WINDOWS_1251="windows-1251"`, `WINDOWS_1251_UPPER="WINDOWS-1251"`, `WIN="win"`, `UTF`, `UTF_UPPER`, `UTF_8`, `UTF_8_UPPER` и др. |
+| `EncodingTypeExport` | 8 значений, в том числе `WINDOWS_1251="windows-1251"`, `WINDOWS_1251_UPPER="WINDOWS-1251"`, `WIN="win"`, `UTF`, `UTF_8` |
 | `EncodingTypeImport` | 6 значений: `WINDOWS_1251="WINDOWS-1251"`, `WIN="win"`, `UTF="utf"`, `UTF_8_UPPER`, `AUTO`, `AUTO_UPPER` |
-| `ScriptStatus` | `NONE=0`, `WAIT_IN_QUEUE=1`, `IN_PROGRESS=2`, `SUCCESS=3`, `FAILED`, `ABORTED` |
+| `ScriptStatus` | `NONE=0`, `WAIT_IN_QUEUE=1`, `IN_PROGRESS=2`, `SUCCESS=3`, дальше `FAILED`, `ABORTED` |
 | `ScriptRunType` | `INTERFACE=0`, `SCHEDULER=1`, `API=2` |
 | `Position` | `START="Start"`, `END="End"`, `BEFORE="Before"`, `AFTER="After"` |
-| `GridTypeIdentifiers` | 17 системных гридов, см. раздел 4 |
+| `GridTypeIdentifiers` | 17 системных гридов, список в разделе про модель |
 
-### Устройство объектов
+### Из чего сделаны объекты
 
-`Workspace`, `Model`, `Multicube`, `View`, `Catalog`, `CatalogView` — dataclasses на
-`dataclasses_json`: у всех есть `to_dict`, `to_json`, `from_dict`, `from_json`, `schema` **[стенд]**.
-Объект `Model` из `get_models()` несёт намного больше полей, чем `model.info()`: `storage_version`,
-`auto_calc`, `created_at`/`updated_at` (unix-время), `workspace_folder_long_id`, режимы чтения и
-записи хранилища, `restore_mode` и др. **[стенд]**.
+`Workspace`, `Model`, `Multicube`, `View`, `Catalog` и `CatalogView` написаны как dataclasses на
+`dataclasses_json`, поэтому у всех есть `to_dict`, `to_json`, `from_dict`, `from_json` и `schema`.
+Объект `Model` из `get_models()` несёт гораздо больше полей, чем возвращает `model.info()`:
+`storage_version`, `auto_calc`, `created_at` и `updated_at` в unix-времени, папку модели, режимы
+чтения и записи хранилища, `restore_mode`.
 
-У коннектора 17 публичных методов, которых нет в документации: `get_system_grid_data`,
+У коннектора нашлось 17 методов, которых нет в документации: `get_system_grid_data`,
 `get_view_definition`, `get_dashboard_definition`, `get_entity_types`, `download_dataframe`,
-`download_file_data`, `download_milticube_data` (опечатка в имени), `download_backup`, `get_lp_hash`,
-`get_view_hash`, `get_optimizer_requests_table` и др. **[стенд]**. Сигнатуры не изучались —
-это недокументированный путь на случай, если публичного метода не хватает.
+`download_backup`, `get_lp_hash`, `get_optimizer_requests_table` и другие. Есть даже
+`download_milticube_data` с опечаткой в имени. Сигнатуры мы не разбирали. Это запасной путь на случай,
+если публичного метода не хватит, но опираться на него стоит осторожно: в следующей версии его могут
+переименовать без предупреждения.
 
----
+## Общее поведение
 
-## 2. Общее поведение
+### Что ходит в сеть, а что нет
 
-### Sync и async
+`model.info()` синхронный. `mc.info()`, `view.info()`, `catalog.info()` и `catalog_view.info()`
+вызываются через `await`, но на сервер не ходят и отдают то, что уже лежит в объекте. В сеть идёт
+только `ws.info()`.
 
-| Вызов | Как вызывать | Ходит в сеть |
-|---|---|---|
-| `model.info()` | sync | нет |
-| `mc.info()`, `view.info()`, `catalog.info()`, `catalog_view.info()` | `await` | нет: отдаёт поля, сохранённые в объекте |
-| `ws.info()` | `await` | да |
+Отсюда следствие, на котором легко споткнуться. Объект SDK хранит снимок на момент получения.
+Переименовали справочник через `catalog.rename(...)`, а старый объект по-прежнему отдаёт старое имя.
+Свежие данные будут только у нового объекта из `get_catalog(...)`. Единственное исключение, которое
+мы видели: `model.stop()` обновляет `is_offline` у того же объекта.
 
-Объекты SDK — снимки на момент получения. После `catalog.rename(...)` старый объект продолжает
-отдавать старое имя; свежие данные — только через новый `get_catalog(...)` **[стенд]**.
-Исключение: `model.stop()` меняет `is_offline` у того же объекта **[стенд]**.
+### Если объекта нет
 
-### Что происходит, если объекта нет **[стенд]**
-
-| Вызов | Результат |
+| Вызов | Что вернётся |
 |---|---|
 | `ws.get_model(id)` | `ModelNotFoundError: Модель model='…' не найдена` |
 | `ws.get_model_by_name(name)` | `None` |
 | `model.get_multicube(id)`, `get_multicube_by_name(name)` | `None` |
-| `model.get_id_multicube_by_name(name)` | `WorkspaceException(404, "Entity by query `…` not found")` |
+| `model.get_id_multicube_by_name(name)` | `WorkspaceException(404, "Entity by query … not found")` |
 | `model.get_catalog(id)`, `get_catalog_by_name(name)` | `WorkspaceException(404, "Каталог с id=… не найден")` |
 | `model.get_catalog_view_by_name(...)`, `mc.get_view_by_name(...)`, `catalog.get_view_by_name(...)` | `None` |
 | `model.get_script_info(id)` | `None` |
 | `model.get_formula(id)` | `WorkspaceException(404, "Куб с id=… не найден")` |
 | `model.get_dashboard_multicubes(id)` | `WorkspaceException(404, "В ответе GET_DASHBOARD_DEFINITION нет definitionJsonString…")` |
 | `model.delete_catalogs([id])` | `WorkspaceException(404, …)` |
-| `catalog.delete_elements(names=[...])` | ничего: несуществующие имена молча пропускаются |
-| `model.get_backup(id)` | `WorkspaceException(500, …)` с HTML-страницей сервера в тексте |
-| `model.run_script(id)` | `KeyError: 'output'` — не `WorkspaceException` |
+| `catalog.delete_elements(names=[...])` | ничего, несуществующие имена тихо пропускаются |
+| `model.get_backup(id)` | `WorkspaceException(500, …)`, в тексте HTML-страница сервера |
+| `model.run_script(id)` | `KeyError: 'output'` |
+
+Мультикуб и справочник, которые ищутся одинаково, ведут себя по-разному. Поэтому после любого
+`get_*` проверяем и на `None`, и на исключение.
 
 ### Ошибки
 
-- `WorkspaceException` хранит в `args` пару `(код, текст)`: `e.args[0]` — HTTP-подобный код (400, 404, 500),
-  `e.args[1]` — текст, часто по-русски **[стенд]**.
-- Часть проверок SDK делает на клиенте, без запроса: недопустимое значение права, роль не числом,
-  несуществующий файл для импорта (`FileNotFoundError`). Такие ошибки приходят за миллисекунды **[стенд]**.
-- Неверные входные данные иногда дают не `WorkspaceException`, а
-  `AttributeError: 'NoneType' object has no attribute 'items'` из `dataclasses_json`: так было при
-  неверном id измерения в фильтре и при экспорте из остановленной модели **[стенд]**. Ловите `Exception`, а не только `WorkspaceException`.
-- `action_info` для скрипта ошибку не бросает, а возвращает `dict` с `modalInfo.isError=True`
-  («Action info disabled»). Ответы с `modalInfo` проверяйте вручную **[стенд]**.
+В `WorkspaceException` лежит пара: `e.args[0]` с кодом в духе HTTP (400, 404, 500) и `e.args[1]`
+с текстом, часто по-русски.
 
-### Время вызовов **[стенд]**
+Часть проверок SDK делает у себя, не отправляя запрос: недопустимое значение права, роль не числом,
+несуществующий файл для импорта (тут будет `FileNotFoundError`). Такие ошибки прилетают за миллисекунды.
+
+Неприятнее, что неверные входные данные иногда дают не `WorkspaceException`, а
+`AttributeError: 'NoneType' object has no attribute 'items'` откуда-то из глубин `dataclasses_json`.
+Мы ловили его на неверном id измерения в фильтре и при экспорте из остановленной модели. Так что
+в скриптах ловим `Exception`, а не только `WorkspaceException`.
+
+Ещё один случай: `action_info` для скрипта не бросает исключение, а возвращает обычный `dict`,
+внутри которого лежит `modalInfo.isError=True` и сообщение «Action info disabled». Если в ответе
+есть `modalInfo`, его стоит проверить руками.
+
+### Сколько это длится
 
 | Операция | Время |
 |---|---|
-| Метаданные: `get_models` (122 модели), `get_multicubes`, `get_catalogs`, `*_by_name` | 0,6–1 с |
-| Системный грид | ~1 с |
+| `get_models` (122 модели), `get_multicubes`, `get_catalogs`, любой `*_by_name` | 0,6–1 с |
+| Системный грид | около 1 с |
 | Любой экспорт в файл или DataFrame | 2,1–2,7 с |
 | `import_om_file`, `import_file`, `clear` | 0,7–1 с |
-| `get_formula` | ~1 с |
-| `change_formula` | ~5 с |
-| Изменение права | ~2 с |
-| `change_uam` | ~4,6 с |
-| `get_user_permissions` | ~5 с |
-| `get_dashboard_multicube_links()` на 4 дашбордах | ~7 с |
+| `get_formula` | около 1 с |
+| `change_formula` | около 5 с |
+| Изменение права | около 2 с |
+| `change_uam` | около 4,6 с |
+| `get_user_permissions` | около 5 с |
+| `get_dashboard_multicube_links()` на четырёх дашбордах | около 7 с |
 | `stop()` / `start()` | 1,7 с / 22,6 с |
 
-`*_by_name`, судя по времени (столько же, сколько полный список), каждый раз загружает весь список объектов **[?]**; у `ws.get_model` это проверено по коду **[код]**. Если
-объект нужен несколько раз, сохраните его в переменную.
+Поиск по имени занимает столько же, сколько загрузка полного списка. Похоже, `*_by_name` каждый раз
+тянет весь список заново (у `ws.get_model` это видно по коду). Если объект нужен несколько раз,
+сохраняем его в переменную.
 
-**Параллельность работает:** `asyncio.gather(mc.export_df(), mc.export_om_file(path))` занял 2,4 с,
-столько же, сколько один экспорт **[стенд]**. В `ws.info()` видно `concurrency_max=30`.
+Параллельность работает. Два экспорта через `asyncio.gather` заняли 2,4 с, то есть столько же,
+сколько один. Лимит Workspace видно в `ws.info()`: `concurrency_max=30`.
 
 ### Файлы
 
-- `path` во всех `export_*` — **папка**. Имя файла SDK строит сам: `<имя объекта>.<расширение>`,
-  например `SRC_MC.csv`, `SRC_MC view 1.csv`. Путь методы не возвращают, результат `None` **[стенд]**.
-- **Если папки нет, SDK не создаёт её, не пишет файл и не бросает ошибку** **[стенд]**. Всегда
-  `Path(dir).mkdir(parents=True, exist_ok=True)` перед экспортом.
-- Повторный экспорт того же объекта в ту же папку даст файл с тем же именем **[?]** (перезапись не
-  проверялась). Для нескольких экспортов одного объекта используйте разные папки.
+Во всех `export_*` аргумент `path` означает папку. Имя файла SDK придумывает сам по имени объекта:
+`SRC_MC.csv`, `SRC_MC view 1.csv`. Путь к файлу метод не возвращает.
 
----
+Если папки нет, SDK её не создаёт, файл не пишет и об ошибке не сообщает. Поэтому перед каждым
+экспортом:
 
-## 3. Workspace
+```python
+Path(dir).mkdir(parents=True, exist_ok=True)
+```
 
-| Метод | Возвращает **[стенд]** |
+Два экспорта одного объекта в одну папку дадут файлы с одинаковым именем. Перезапись мы не
+проверяли, но на всякий случай разводим такие экспорты по разным папкам.
+
+## Workspace
+
+| Метод | Что возвращает |
 |---|---|
-| `await ws.info()` | `WsInfo`: `workspace_name`, `workspace_id`, `workspace_size_allowance` / `current_workspace_size` (байты), `storage_version`, `tag_summaries` (список `TagMessage`: long_id, name, color…), `audit_settings_info`, `concurrency_max`, `check_license_status`, `active_model_only`. **`model_ids`, `model_names`, `model_summaries` приходят пустыми** |
-| `await ws.get_models()` | `list[Model]`, все модели WS (122 за 0,9 с) |
+| `await ws.info()` | `WsInfo`: имя и id воркспейса, лимит и текущий размер (в байтах), `storage_version`, теги (`tag_summaries`), настройки аудита, `concurrency_max`, `check_license_status`. Поля `model_ids`, `model_names`, `model_summaries` приходят пустыми |
+| `await ws.get_models()` | `list[Model]`, все модели воркспейса. 122 модели за 0,9 с |
 | `await ws.get_model(id)` | `Model` или `ModelNotFoundError` |
 | `await ws.get_model_by_name(name)` | `Model` или `None` |
 
-Список моделей берите из `get_models()`, не из `ws.info()`.
+Список моделей берём из `get_models()`. В `ws.info()` его нет, хотя поля для него там есть.
 
----
+## Модель: структура и метаданные
 
-## 4. Модель: структура и метаданные
-
-| Метод | Возвращает **[стенд]** |
+| Метод | Что возвращает |
 |---|---|
-| `model.info()` (sync) | `ModelInfo`: model_name, cell_count, memory, model_id, model_definition_serial_number, is_offline |
-| `get_multicubes()` | `list[Multicube]`, у объекта `name`, `id`, `model_id` |
+| `model.info()` | `ModelInfo`: model_name, cell_count, memory, model_id, model_definition_serial_number, is_offline. Синхронный |
+| `get_multicubes()` | `list[Multicube]`, у каждого `name`, `id`, `model_id` |
 | `get_multicube(id)`, `get_multicube_by_name(name)` | `Multicube` или `None` |
 | `get_id_multicube_by_name(name)` | `int` или `WorkspaceException(404)` |
-| `get_catalogs(start=0, count=-1)` | `list[Catalog]`. Включает системные справочники `Roles`, `Users`, `Access Levels`. Пагинация работает: `count=3` вернул 3 из 5 |
-| `get_catalog(id)`, `get_catalog_by_name(name)` | `Catalog`. В объекте есть `unknown_things` — сырой ответ сервера: `itemCount`, `isFlat`, `isNumber`, `sortOrder`, `subsetEntityLongIds`, `propertiesInfo` и др. |
-| `get_catalog_views(catalog_id)` | `list[CatalogView]`, ~1,3 с |
+| `get_catalogs(start=0, count=-1)` | `list[Catalog]`, включая системные `Roles`, `Users`, `Access Levels`. Пагинация работает: `count=3` вернул три справочника из пяти |
+| `get_catalog(id)`, `get_catalog_by_name(name)` | `Catalog`. В поле `unknown_things` лежит сырой ответ сервера: `itemCount`, `isFlat`, `isNumber`, `sortOrder`, `subsetEntityLongIds` и другое |
+| `get_catalog_views(catalog_id)` | `list[CatalogView]`, около 1,3 с |
 | `get_catalog_view_by_name(catalog_id, name)` | `CatalogView` или `None` |
-| `action_info(action_id)` | `dict`. Для оптимизационного запроса: `name`, `savedActionLongId`, `objectives`, `variables`, `constraints`, `optimizerLongId`, `options`, `actionId="SAVED_ACTION_INFO"`. Для скрипта — ошибка внутри `dict` (`modalInfo.isError`) |
+| `action_info(action_id)` | `dict`. Для оптимизационного запроса в нём `name`, `savedActionLongId`, `objectives`, `variables`, `constraints`, `optimizerLongId`, `options`. Для скрипта приходит ошибка внутри `dict` |
 
 ### Системные гриды
+
+Системные гриды выручают там, где отдельного метода нет. Например, все формулы модели проще всего
+достать отсюда.
 
 ```python
 from os_ws_sdk.objects.system_grid_exporter import SystemGridExporter, GridTypeIdentifiers
@@ -242,176 +250,183 @@ exporter = SystemGridExporter.from_model(model)
 df = await exporter.export_df(GridTypeIdentifiers.CUBES_GRID)
 ```
 
-| Грид | ID | Колонки **[стенд]** |
+| Грид | ID | Колонки |
 |---|---|---|
 | `MULTICUBES_GRID` | 137000000002 | rowEntityLongId, rowLabel, Code, Folder, Comments, User Lists, Time Scale, Versions, Cube Subset, Clean Cells, Multicube Type, Cell Count, Size (GB), Id, Dev Complete |
-| `FOLDERS_GRID` | 137000000003 | Parent Folder, Comments, Id (+ rowEntityLongId, rowLabel, если есть строки) |
-| `CUBES_GRID` | 137000000004 | rowEntityLongId, rowLabel, Multicube, **Formula**, Format (JSON), Comments, Code, Summary, Time Summary, User Lists, Time Scale, Versions, Cube Subset, DCA Formula, Use Switchover, Use Workflow, Storage Format (JSON), Style, Referenced By, Cell Count, Size (GB), User Context Dimension, Omit Dimensions, Clean Cells, Repair Cells, Id, AutoCalculation, Last Update, Obfuscation Formula, Stable View Formula, User View Formula, Error Comment |
+| `FOLDERS_GRID` | 137000000003 | Parent Folder, Comments, Id (плюс rowEntityLongId и rowLabel, если папки есть) |
+| `CUBES_GRID` | 137000000004 | rowEntityLongId, rowLabel, Multicube, Formula, Format (JSON), Comments, Code, Summary, Time Summary, User Lists, Time Scale, Versions, Cube Subset, DCA Formula, Use Switchover, Use Workflow, Storage Format (JSON), Style, Referenced By, Cell Count, Size (GB), User Context Dimension, Omit Dimensions, Clean Cells, Repair Cells, Id, AutoCalculation, Last Update, Obfuscation Formula, Stable View Formula, User View Formula, Error Comment |
 | `VERSIONS_GRID` | 137000000013 | rowEntityLongId, rowLabel, Item Name, Code, Debug (JSON), Id, Actual(s), SwitchOver, Comments |
 | `VERSIONS_SUBSETS_GRID` | 137000000014 | Code, Comments, Element Count, Id, Production, Dev Complete |
 | `DASHBOARDS_GRID` | 137000000022 | rowEntityLongId, rowLabel, Folder, Referred By, Comments, Production, Dev Complete, Id |
 | `CONTEXT_TABLES_GRID` | 137000000024 | Folder, Comments, Production, Dev Complete, Id |
 | `MODEL_USERS_GRID` | 137000000027 | rowEntityLongId, rowLabel (e-mail), First Name, Last Name, User Role, Modeler, Administrator, Service, Comments, Config, User Ban, User Ban Message, Id |
-| `WORKSPACE_USERS_GRID` | 137000000028 | те же, что у MODEL_USERS_GRID |
+| `WORKSPACE_USERS_GRID` | 137000000028 | те же, что у `MODEL_USERS_GRID` |
 | `BACKUPS_GRID` | 137000000030 | rowEntityLongId, rowLabel (`#47329`), User, Description, Date & Time, File Size MB, Memory GB, Comments, Model Version, Model Version Comment, Id |
-| `DASHBOARD_MULTICUBES_GRID` | 137000000080 | rowEntityLongId, rowLabel, Folder, Comments, Namespace, Namespace Type, View Type, Saved View Owner, Referenced Objects Ids, Referenced Objects, View Id, Saved View Creator/Updater, Production, Dev Complete |
-| `LIST_PROPERTIES_GRID` | 137000000032 | **не работает**: 400 `viewReference entity not valid`, в том числе с `context_entity_long_id` справочника |
-| `TIME_DAYS/WEEKS/MONTHS/PERIODS/YEARS_SUBSETS_GRID` | 137000000040–44 | **не работают**: та же ошибка, с контекстом тоже |
-| не из enum: оптимизационные запросы | 137000000051 | rowEntityLongId, rowLabel, Optimizer Engine, Objectives, Variables, Constraints, Comments, Id |
+| `DASHBOARD_MULTICUBES_GRID` | 137000000080 | rowEntityLongId, rowLabel, Folder, Comments, Namespace, Namespace Type, View Type, Saved View Owner, Referenced Objects Ids, Referenced Objects, View Id, Saved View Creator, Saved View Updater, Production, Dev Complete |
+| `LIST_PROPERTIES_GRID` | 137000000032 | не работает: 400 `viewReference entity not valid`, с `context_entity_long_id` справочника тоже |
+| `TIME_DAYS/WEEKS/MONTHS/PERIODS/YEARS_SUBSETS_GRID` | 137000000040–44 | не работают, та же ошибка, контекст не помогает |
+| оптимизационные запросы (нет в enum) | 137000000051 | rowEntityLongId, rowLabel, Optimizer Engine, Objectives, Variables, Constraints, Comments, Id |
 
-Особенности **[стенд]**:
-- **Пустой грид приходит без колонок `rowEntityLongId` и `rowLabel`.** Код, который на них опирается,
-  должен проверять наличие колонок.
-- **`CUBES_GRID` смешивает строки мультикубов и кубов.** У строки мультикуба `Multicube` и `Formula` пустые,
-  у куба в `Multicube` — имя родителя. Колонка `Formula` даёт все формулы модели одним запросом (~1 с).
-- **`DASHBOARD_MULTICUBES_GRID` — не связи дашбордов**, а список сущностей модели и их вью
-  (справочники, мультикубы, вью по умолчанию). Связи дашборд → мультикуб — через
-  `get_dashboard_multicube_links()` (раздел 10).
-- **`row_count` — размер страницы, а не лимит:** с `row_count=5` пришли все 11 строк.
-- Числовой id работает вместо enum: `export_df(137000000002)`.
-- **`exporter.export_many()` без аргументов всегда падает** через ~11 с: в список по умолчанию входят
-  нерабочие гриды, а одна ошибка валит весь вызов. Передавайте список явно:
-  `export_many([GridTypeIdentifiers.MULTICUBES_GRID, GridTypeIdentifiers.CUBES_GRID])` →
-  `dict` с ключами-именами enum (`"MULTICUBES_GRID"`).
-- `export_many_as_one_df([...])` склеивает гриды в один DataFrame, добавляя `_grid_name`, `_grid_id`;
-  колонки — объединение колонок всех гридов.
+Несколько вещей, о которых документация молчит:
 
----
+- У пустого грида нет колонок `rowEntityLongId` и `rowLabel`. Код, который на них опирается, должен
+  сначала проверить, что они есть.
+- В `CUBES_GRID` строки мультикубов идут вперемешку со строками кубов. У мультикуба колонки
+  `Multicube` и `Formula` пустые, у куба в `Multicube` стоит имя родителя. Все формулы модели
+  приходят одним запросом примерно за секунду.
+- `DASHBOARD_MULTICUBES_GRID`, вопреки названию, не про дашборды. Там список сущностей модели
+  и их вью: справочники, мультикубы, вью по умолчанию. Связи дашбордов с мультикубами отдаёт
+  `get_dashboard_multicube_links()`, о нём ниже.
+- `row_count` задаёт размер страницы, а не лимит. С `row_count=5` пришли все 11 строк.
+- Вместо enum можно передать число: `export_df(137000000002)`.
+- `exporter.export_many()` без аргументов падает всегда, примерно через 11 секунд. В список по
+  умолчанию входят нерабочие гриды, и одной ошибки хватает, чтобы упал весь вызов. Список передаём
+  явно: `export_many([GridTypeIdentifiers.MULTICUBES_GRID, GridTypeIdentifiers.CUBES_GRID])`.
+  Вернётся `dict`, где ключи совпадают с именами enum (`"MULTICUBES_GRID"`).
+- `export_many_as_one_df([...])` склеивает гриды в один DataFrame и добавляет колонки `_grid_name`
+  и `_grid_id`.
 
-## 5. Мультикубы
+## Мультикубы
 
-### Обычный экспорт и экспорт «формата ОМ»
+### Два вида экспорта
+
+У мультикуба два способа выгрузки, и разница между ними больше, чем кажется по названиям.
 
 | | `export_file` / `export_df` | `export_om_file` |
 |---|---|---|
-| Что выгружает | Грид в раскладке сохранённого вью | Плоскую таблицу напрямую из хранилища |
-| Начало файла | Пустая строка; строка с именами измерений по осям (`Versions;Cubes;Months`); строка заголовков колонок (`;;"Jan 21";…`); дальше данные | Одна строка заголовка: измерения + кубы (`Versions;Months;куб_1;куб_2;куб_3;bool_cube`) |
-| Агрегаты времени | Как в вью (в тесте — только месяцы) | **Включены**: строки `FY21`, `YTD` |
+| Что выгружает | Грид в раскладке сохранённого вью | Плоскую таблицу прямо из хранилища |
+| Начало файла | Пустая строка, потом строка с именами измерений по осям (`Versions;Cubes;Months`), потом заголовки колонок (`;;"Jan 21";…`), потом данные | Одна строка заголовка: измерения и кубы (`Versions;Months;куб_1;куб_2;куб_3;bool_cube`) |
+| Агрегаты времени | Как во вью (у нас были только месяцы) | Есть: строки `FY21` и `YTD` |
 | Булевы значения | `true` / `false` | `1` / `0` |
-| Форматы | `CSV` (по умолч.), `TXT` (то же содержимое), `XLSX`, `XLS` | `OM_CSV`, `OM_TXT`, `OM_ZIP` |
-| Фильтры | `filter_boolean_cube=[cube_id, dim_id]`, `filter_formula=[formula, dim_id]` — см. ниже | `boolean_cube_filter_long_id=cube_id`, `filter_formula="formula"` — **работают** |
+| Форматы | `CSV` (по умолчанию), `TXT`, `XLSX`, `XLS` | `OM_CSV`, `OM_TXT`, `OM_ZIP` |
+| Фильтры | `filter_boolean_cube=[cube_id, dim_id]`, `filter_formula=[formula, dim_id]`, у нас не заработали | `boolean_cube_filter_long_id=cube_id`, `filter_formula="formula"`, работают |
 
-Подробности форматов **[стенд]**:
-- `DownloadFormat.XLS` на деле даёт XLSX (zip внутри) с расширением `.xls`.
-- `DownloadFormatOM.OM_ZIP` даёт файл `SRC_MC.gz`, внутри которого **zip** (не gzip) с CSV
-  `SRC_MC--2026.10.12--01.52.csv`.
-- `delimiter=","` и `encoding=EncodingTypeExport.WINDOWS_1251` работают. BOM в UTF-8 нет.
-- Строковые значения заголовков в кавычках (`"Jan 21"`), числа без.
+Для преобразований и обратного импорта берём `export_om_file`. Агрегаты `FY21` и `YTD` перед
+обработкой отфильтровываем, иначе они попадут в данные.
 
-### `export_df` сломан: обход
+Мелочи про форматы, которые всплыли по ходу:
 
-`mc.export_df()` читает CSV грида через `pd.read_csv(skiprows=2)` без разделителя, а файл приходит
-с `;`. Результат — DataFrame из **одной колонки**, где вся строка `Actual;куб_1;1;1;…` — одна ячейка
-**[стенд]**. То же у `view.export_df()`. У `catalog.export_df()` проблемы нет.
+- `DownloadFormat.XLS` на самом деле отдаёт XLSX, только с расширением `.xls`.
+- `DownloadFormatOM.OM_ZIP` создаёт файл `SRC_MC.gz`, но внутри обычный zip, не gzip. В архиве лежит
+  CSV с датой в имени: `SRC_MC--2026.10.12--01.52.csv`.
+- `delimiter=","` и `encoding=EncodingTypeExport.WINDOWS_1251` работают как ожидается. BOM в UTF-8 нет.
+- `TXT` по содержимому не отличается от `CSV`.
 
-Лишние kwargs передаются в `pd.read_csv`, поэтому обход простой **[стенд]**:
+### `export_df` сломан, и как его починить
+
+Это самая неприятная находка. `mc.export_df()` читает CSV грида через `pd.read_csv(skiprows=2)`
+и не передаёт разделитель, а файл приходит с `;`. На выходе DataFrame из одной колонки, и в каждой
+ячейке целая строка вида `Actual;куб_1;1;1;…`. У `view.export_df()` то же самое. У справочника
+`export_df` работает нормально.
+
+К счастью, лишние аргументы SDK передаёт прямо в `pd.read_csv`, поэтому лечится одним параметром:
 
 ```python
-df = await mc.export_df(sep=";")        # или delimiter=";"
-# 14 колонок: 'Unnamed: 0' (Versions), 'Unnamed: 1' (Cubes), 'Jan 21' … 'Dec 21'
+df = await mc.export_df(sep=";")        # delimiter=";" тоже работает
+# колонки: 'Unnamed: 0' (Versions), 'Unnamed: 1' (Cubes), 'Jan 21' … 'Dec 21'
 df = df.rename(columns={"Unnamed: 0": "Versions", "Unnamed: 1": "Cubes"})
 ```
 
-Имена измерений по строкам в DataFrame теряются (`Unnamed: N`), их берите из второй строки файла.
-Все значения приходят строками.
+Имена измерений по строкам теряются, поэтому колонки приходится переименовывать руками. Все значения
+приходят строками.
 
 ### Фильтры
 
-- **В `export_om_file` оба фильтра работают:** с булевым кубом, равным TRUE только в январе и
-  феврале, выгрузились только `Jan 21` и `Feb 21` **[стенд]**.
-- **В `export_file` и `export_df` фильтры по проверенным измерениям не сработали** **[стенд]**:
-  - `filter_boolean_cube` с измерением времени (13000000003) или версий (20000000020) файл не меняет;
-  - `filter_formula` убирает **все** элементы указанного измерения: со временем остаются колонки без
-    месяцев, с версиями — заголовки без строк;
-  - с несуществующим id измерения — `AttributeError` из `dataclasses_json`.
-  
-  [?] Вероятно, фильтр ждёт булев куб или формулу, у которых нет других измерений, кроме
-  фильтруемого (в примерах документации это измерение-справочник по строкам). Для фильтрации
-  данных используйте `export_om_file`.
+В `export_om_file` оба фильтра работают. Булев куб был равен TRUE только в январе и феврале,
+и в выгрузку попали только `Jan 21` и `Feb 21`.
+
+С `export_file` и `export_df` разобраться не получилось. Мы пробовали три измерения:
+
+- `filter_boolean_cube` со временем (13000000003) или версиями (20000000020) никак не меняет файл.
+- `filter_formula` выкидывает все элементы указанного измерения. Со временем остаются колонки
+  без месяцев, с версиями остаются заголовки без строк.
+- С несуществующим id измерения вызов падает с `AttributeError`.
+
+Похоже, фильтру нужен булев куб или формула только по тому измерению, которое фильтруется. В
+примерах документации это справочник по строкам. Проверить это на нашей модели было не на чем.
+Пока для отфильтрованной выгрузки используем `export_om_file`.
 
 ### Импорт, очистка, копирование
 
-| Метод | Поведение **[стенд]** |
+| Метод | Как себя ведёт |
 |---|---|
-| `clear()` | 0,8 с. Значения становятся 0, строки в гриде остаются |
-| `import_om_file(path)` | Круговой тест (экспорт ОМ → `clear` → импорт) вернул значения полностью |
-| `import_file(path)` | Принимает CSV грида без ошибки |
-| `import_om_file(файл грида)` | **Ошибки нет** при файле не того формата. Результат не проверялся — не полагайтесь на то, что SDK поймает неверный файл |
-| `import_from_multicube(src_id)` | Скопировал значения `SRC_MC` в `DEST_MC` (одинаковые время, версии и имена кубов), 1,4 с |
-| `export_to_multicube(dst_id)` | Отработал без ошибки, 1,4 с |
-| `change_cell_value(value, cube_id, dimension_id)` | Не проверялся: смысл `dimension_id` не ясен |
+| `clear()` | 0,8 с. Значения обнуляются, строки в гриде остаются |
+| `import_om_file(path)` | Экспорт ОМ, `clear` и импорт того же файла вернули все значения на место |
+| `import_file(path)` | CSV грида принимается без ошибок |
+| `import_om_file(файл грида)` | Файл не того формата SDK принимает без ошибки. Что при этом стало с данными, мы не проверяли. Рассчитывать на то, что SDK поймает неверный файл, не стоит |
+| `import_from_multicube(src_id)` | Скопировал значения `SRC_MC` в `DEST_MC` (одинаковые время, версии и имена кубов) за 1,4 с |
+| `export_to_multicube(dst_id)` | Отработал без ошибок за 1,4 с |
+| `change_cell_value(value, cube_id, dimension_id)` | Не проверяли: непонятно, что SDK ждёт в `dimension_id` |
 
-`import_om_file` использует action `IMPORT_STORAGE_VIEW` с зашитыми `;`, десятичной точкой и UTF-8,
-колонки сопоставляются по заголовкам **[код]**. `import_file` — `IMPORT_FILE_IN_COMMON` **[код]**.
+По коду SDK `import_om_file` отправляет action `IMPORT_STORAGE_VIEW`, в котором зашиты разделитель
+`;`, десятичная точка и UTF-8. Колонки сопоставляются по заголовкам, поэтому у приёмника должны быть
+те же имена измерений и кубов. `import_file` отправляет `IMPORT_FILE_IN_COMMON`.
 
 ### Вью мультикуба
 
-`mc.get_views()` → `list[View]` (`name`, `id`, `model_id`, `multicube_id`). Вью умеет то же, что
-мультикуб: `export_file`, `export_om_file`, `export_df` (с тем же багом), `import_file`,
-`import_om_file` **[стенд]**. `mc.export_views(path)` пишет по файлу на вью: `SRC_MC view 1.csv`.
+`mc.get_views()` возвращает `list[View]` с полями `name`, `id`, `model_id`, `multicube_id`. Вью умеет
+всё то же, что мультикуб: `export_file`, `export_om_file`, `export_df` (с тем же багом), `import_file`,
+`import_om_file`. `mc.export_views(path)` пишет по файлу на каждое вью, например `SRC_MC view 1.csv`.
 
----
+## Справочники
 
-## 6. Справочники (catalogs)
+В SDK справочник называется `catalog`, потому что `list` в Python уже занято.
 
-### Чтение **[стенд]**
+### Чтение
 
-| Метод | Возвращает |
+| Метод | Что возвращает |
 |---|---|
 | `await catalog.info()` | `CatalogInfo`: name, id, model_id |
-| `get_elements()` | `(список из 8 имён колонок, список строк)`. Колонки начинаются с `Item Name`, `List`, `Parent`. В строке 3 строки, 2 `None`, 3 `int`. **`row_count`/`column_count` не ограничивают:** с `row_count=3, column_count=2` пришли все 5 строк и 8 колонок |
-| `export_df()` | DataFrame, 9 колонок: `Unnamed: 0` (ключ элемента), Item Name, List, Parent, Hierarchy Level, Dimension Rank, Code, Debug, Id |
-| `export_file(path)` | По умолчанию **XLSX** (у мультикуба — CSV). CSV: заголовок `;"Item Name";List;Parent;…`, колонка `Debug` — многострочный JSON в кавычках (id, longId, parentLongId, nextLongId, lvl, rank, accessLevelId, isParent) |
-| `export_om_file(path)` | **404 «не удалось получить идентификатор файла»** во всех форматах. Для справочника и его вью не работает |
+| `get_elements()` | Кортеж: список из восьми имён колонок (начинается с `Item Name`, `List`, `Parent`) и список строк. Параметры `row_count` и `column_count` ничего не ограничивают: с `row_count=3, column_count=2` пришли все 5 строк и 8 колонок |
+| `export_df()` | DataFrame из 9 колонок: `Unnamed: 0` (ключ элемента), Item Name, List, Parent, Hierarchy Level, Dimension Rank, Code, Debug, Id |
+| `export_file(path)` | По умолчанию XLSX (у мультикуба по умолчанию CSV). В CSV колонка `Debug` содержит многострочный JSON в кавычках |
+| `export_om_file(path)` | Не работает: 404 «не удалось получить идентификатор файла», в любом формате, у справочника и у его вью |
 | `get_views()`, `get_view_by_name()` | `CatalogView` (`id`, `name`, `model_id`, `catalog_id`) или `None` |
-| `export_views(path)` | Файл на каждое вью, в XLSX |
+| `export_views(path)` | По файлу XLSX на каждое вью |
 
-Id элементов у каждого справочника со своим префиксом: 206000000001…, 207000000001…, 211000000001…
-`Debug` в CSV ломает построчное чтение файла — читайте через `pandas` или берите `export_df`.
+Из-за многострочного `Debug` CSV справочника нельзя читать построчно. Читаем через pandas или
+сразу берём `export_df`. У каждого справочника свой префикс id элементов: 206000000001…,
+207000000001… и так далее.
 
-### Запись **[стенд]**
+### Запись
 
-| Метод | Поведение |
+| Метод | Как себя ведёт |
 |---|---|
-| `model.create_catalogs(names=[...], position=, relative_to=)` | Создаёт, возвращает `None`. Объект берите через `get_catalog_by_name` |
-| `catalog.create(model_id, names=[...])` | То же через объект справочника |
-| `add_elements(names=[...])`, `add_elements(count=N)`, `position=BEFORE, relative_to=` | Работают, возвращают `None` (id новых элементов не возвращаются) |
+| `model.create_catalogs(names=[...], position=, relative_to=)` | Создаёт справочники и возвращает `None`. Сам объект потом достаём через `get_catalog_by_name` |
+| `catalog.create(model_id, names=[...])` | То же самое через объект справочника |
+| `add_elements(names=[...])`, `add_elements(count=N)`, `position=BEFORE, relative_to=` | Работают. Id новых элементов не возвращаются |
 | `rename_elements(names, elements_ids)` | Работает |
-| `delete_elements(ids=[...])`, `delete_elements(names=[...])` | Работают. Несуществующее имя молча пропускается |
+| `delete_elements(ids=[...])`, `delete_elements(names=[...])` | Работают, несуществующие имена тихо пропускаются |
 | `clear()` | Удаляет все элементы |
-| **`import_file(path)`** | **Не добавляет элементы.** После `clear` импорт собственного CSV-экспорта, собственного XLSX-экспорта и простого CSV (`Item Name` + 3 имени) дал 0 элементов, ошибок нет |
-| `export_catalog(dst_id)` / `import_catalog(src_id)` | Ошибок нет, но из 3 элементов источника в приёмник попал **1**. Какой и почему — не выяснено |
+| `import_file(path)` | Не добавляет элементы. Мы очищали справочник и импортировали три файла: его же CSV-выгрузку, его же XLSX-выгрузку и простой CSV с колонкой `Item Name`. Каждый раз 0 элементов и никакой ошибки |
+| `export_catalog(dst_id)` / `import_catalog(src_id)` | Ошибок нет, но из трёх элементов источника в приёмник попал один. Какой и почему, не разобрались |
 | `rename([...])`, `model.rename_catalogs(names, ids)` | Работают |
 | `delete()`, `model.delete_catalogs(ids)` | Работают |
 
-**Вывод:** надёжный способ наполнить справочник — `add_elements`. Импорт и копирование справочников
-через SDK пока считать нерабочими.
+Итог простой: наполнять справочник через SDK можно только `add_elements`. Импорт и копирование
+справочников пока считаем нерабочими.
 
----
-
-## 7. Формулы
+## Формулы
 
 ```python
 from os_ws_sdk.objects.cube_formula_manager import CubeFormulaManager
 formulas = CubeFormulaManager.from_model(model)
-text = await formulas.get_formula(cube_id)              # = model.get_formula(cube_id)
-result = await formulas.change_formula(cube_id, "3")     # = model.change_formula(...)
+text = await formulas.get_formula(cube_id)              # то же, что model.get_formula(cube_id)
+result = await formulas.change_formula(cube_id, "3")     # то же, что model.change_formula(...)
 ```
 
-**[стенд]**:
-- `get_formula` → `str`, ~1 с. id можно передать строкой.
-- `change_formula` → `int`: `0`, если формула та же, `1`, если изменена. ~5 с.
-- Синтаксическая ошибка → `WorkspaceException(400, "Не удалось изменить формулу куба id=…:
-  CXP: Can't parse formula: … Expected formula format: Number")`.
-- Параметра `conditional_formula` из документации нет **[код]**.
-- `get_formula` при каждом вызове листает `GET_CUBES_INFO` до нужного куба: для массового чтения
-  берите `CUBES_GRID` **[код]**.
+`get_formula` возвращает строку примерно за секунду, id можно передать и строкой. `change_formula`
+работает около пяти секунд и возвращает `0`, если формула не изменилась, или `1`, если изменилась.
+Синтаксическую ошибку сервер описывает понятно:
+`WorkspaceException(400, "Не удалось изменить формулу куба id=…: CXP: Can't parse formula: … Expected formula format: Number")`.
 
----
+Параметра `conditional_formula`, который упоминается в документации, в коде SDK нет. По коду же видно,
+что `get_formula` при каждом вызове листает `GET_CUBES_INFO` до нужного куба, так что для чтения всех
+формул разом удобнее `CUBES_GRID`.
 
-## 8. Права, UAM, пользователи
+## Права, UAM, пользователи
 
-### Матрицы прав **[стенд]**
+### Матрицы прав
 
 | Метод | Грид |
 |---|---|
@@ -420,20 +435,22 @@ result = await formulas.change_formula(cube_id, "3")     # = model.change_formul
 | `get_list_permissions(id=None)` | 137000000012 |
 | `get_macro_permissions(id=None)` (алиас `get_macros_permissions`) | 137000000045 |
 
-Формат: DataFrame `rowEntityLongId`, `rowLabel`, затем по колонке на роль, **колонка называется
-именем роли** (`SDK_PROBE_ROLE`). Значения `write` / `read` / `none`. С `id` — одна строка. Если в модели
-нет ролей, остаются только две первые колонки. Матрица макросов включает системные действия
-(`Open`, `Import File`, `Export`, `Create Item`, `Delete Item` …) и скрипты модели.
+Все четыре метода возвращают DataFrame. В нём колонки `rowEntityLongId`, `rowLabel` и по колонке на
+каждую роль, причём колонка называется именем роли. Значения `write`, `read` или `none`. Если передать
+`id`, останется одна строка. Если ролей в модели нет, останутся только две первые колонки. В матрице
+макросов кроме скриптов модели есть системные действия: `Open`, `Import File`, `Export`, `Create Item`,
+`Delete Item` и другие.
 
-`PermissionGridExporter.from_model(model).export(grid_id)` → `PermissionGridData(dataframe, role_columns)`,
-где `role_columns` — список `PermissionRoleColumn(role_id, role, column)`. Это способ узнать
-**id роли по имени**.
+Чтобы узнать id роли по имени, пригодится
+`PermissionGridExporter.from_model(model).export(grid_id)`. Он возвращает
+`PermissionGridData(dataframe, role_columns)`, где каждый `PermissionRoleColumn` хранит `role_id`,
+`role` и `column`.
 
-`get_user_permissions()` (алиас `get_userpermisions`) → DataFrame `user`, `object_type`, `object_id`,
-`access_type`, `role`; ~5 с. Администраторы (роль 19000000000) в него не попадают, с
-`ignore_missing_roles=False` вызов падает на первом администраторе.
+`get_user_permissions()` (алиас `get_userpermisions`) отдаёт DataFrame с колонками `user`,
+`object_type`, `object_id`, `access_type`, `role` и работает около пяти секунд. Администраторов
+с ролью 19000000000 в нём нет. С `ignore_missing_roles=False` вызов падает на первом администраторе.
 
-### Изменение прав **[стенд]**
+### Изменение прав
 
 ```python
 from os_ws_sdk.objects.permission_change_manager import PermissionChangeManager
@@ -441,179 +458,164 @@ pm = PermissionChangeManager.from_model(model)
 await pm.change_multicube_permission(mc_id, role_id, "read")   # те же методы есть у model
 ```
 
-- `change_multicube_permission`, `change_list_permission`, `change_version_permission` — `write` /
-  `read` / `none` в любом регистре. ~2 с, возвращают `True`.
-- **`True` возвращается и при установке того же значения повторно** — это не признак изменения.
-- `role_id` — только число. Имя роли → `WorkspaceException(400, "ID роли должен быть целым")`.
-- Неверное значение → `400 "permission должен быть одним из: write, read, none"` (на клиенте).
-  Несуществующая роль → `404 "Роль с id=… не найдена в матрице доступов"`.
-- **Макросы:** `change_macros_permission` (алиасы `change_macro_permission`, `change_mscros_permission`)
-  принимает `"read"`, `"write"`, `"false"`, `True`, `False`. **Значение `"none"` SDK отвергает**
-  с ошибкой «должен быть одним из: true, false, write, read, none», хотя `none` в этом списке есть.
-  Снимайте доступ через `False`.
+- `change_multicube_permission`, `change_list_permission` и `change_version_permission` принимают
+  `write`, `read` или `none` в любом регистре. Работают около двух секунд и возвращают `True`.
+- `True` приходит и тогда, когда ставишь то же значение, что уже стоит. По нему нельзя понять,
+  изменилось ли что-то.
+- Роль передаётся только числом. На имя роли SDK отвечает
+  `WorkspaceException(400, "ID роли должен быть целым")`.
+- Неверное значение права SDK отбивает сам: `400 "permission должен быть одним из: write, read, none"`.
+  На несуществующую роль отвечает сервер: `404 "Роль с id=… не найдена в матрице доступов"`.
+- С макросами есть баг. `change_macros_permission` (и его алиасы `change_macro_permission`,
+  `change_mscros_permission`) принимает `"read"`, `"write"`, `"false"`, `True` и `False`, а строку
+  `"none"` отвергает. Текст ошибки при этом такой: «должен быть одним из: true, false, write, read,
+  none». Доступ снимаем через `False`.
 
-### UAM **[стенд]**
+### UAM
 
-`UamManager.from_model(model)`: `get_enabled_list_ids()`, `get_uam_grid_mapping()`, `get_uam(list_id)`,
-`change_uam(list_id, item_id, user, permission)`; у `model` есть `get_list_uam`, `get_uam`, `change_uam`.
+`UamManager.from_model(model)` даёт `get_enabled_list_ids()`, `get_uam_grid_mapping()`,
+`get_uam(list_id)` и `change_uam(list_id, item_id, user, permission)`. У модели есть короткие версии:
+`get_list_uam`, `get_uam`, `change_uam`.
 
-- **`get_enabled_list_ids()` / `get_list_uam()` возвращают все справочники модели**, включая
-  системные, а не только с включённым UAM. `get_uam` на справочнике без UAM →
-  `400 "Dimension '…' user cube not found"`.
-- `get_uam_grid_mapping()` → `dict` `{list_id: uam_grid_id}`.
-- `get_uam(list_id)` → DataFrame: строки — элементы справочника (включая `TOTAL`), колонки —
-  e-mail пользователей, значения `write` / `read` / `none`. ~2 с.
-- `change_uam(list_id, item_id, "user@mail", "read")` → `True`, ~4,6 с. Пользователя можно указать
-  e-mail. Несуществующий → `404 "Пользователь '…' не найден в UAM-grid"`.
+`get_enabled_list_ids()` и `get_list_uam()` возвращают все справочники модели, включая системные,
+а не только те, где включён UAM. Если вызвать `get_uam` на справочнике без UAM, получим
+`400 "Dimension '…' user cube not found"`.
 
-### Пользователи **[стенд]**
+`get_uam_grid_mapping()` отдаёт словарь `{id справочника: id UAM-грида}`. `get_uam(list_id)` отдаёт
+DataFrame, где строки соответствуют элементам справочника (включая `TOTAL`), колонки соответствуют
+e-mail пользователей, а в ячейках `write`, `read` или `none`. Работает около двух секунд.
 
-`get_model_user_list()` / `get_ws_user_list()` → DataFrame с колонками `MODEL_USERS_GRID`.
-`get_model_user_info(id)` / `get_ws_user_info(id)` → DataFrame из одной строки; `id` — `rowEntityLongId`
-пользователя (111000000…). Без прав на пользователей WS — `Grid access denied` **[док]**.
+`change_uam(list_id, item_id, "user@mail", "read")` возвращает `True` примерно за 4,6 секунды.
+Пользователя можно указать по e-mail. На несуществующего SDK отвечает
+`404 "Пользователь '…' не найден в UAM-grid"`.
 
----
+### Пользователи
 
-## 9. Скрипты **[стенд]**
+`get_model_user_list()` и `get_ws_user_list()` возвращают DataFrame с колонками `MODEL_USERS_GRID`.
+`get_model_user_info(id)` и `get_ws_user_info(id)` возвращают одну строку, а `id` здесь означает
+`rowEntityLongId` пользователя (вида 111000000…). По документации, без прав на пользователей
+воркспейса сервер ответит `Grid access denied`.
 
-| Метод | Возвращает |
+## Скрипты
+
+| Метод | Что возвращает |
 |---|---|
-| `get_script_list()` | `list[int]` — id скриптов |
-| `get_script_info(id)` | DataFrame из одной строки, 16 колонок: rowEntityLongId, rowLabel (имя), **Macros (исходный код скрипта)**, Folder, Scheduler, Lock Mode, Last Date, Last Time, Last Status, Memory Limit MB, Time Limit sec, Custom Offset, Comments, Production, Dev Complete, Id. Нет скрипта — `None` |
-| `run_script(id)` | **Ждёт окончания скрипта** и возвращает его вывод строкой (`console.log("hi!")` → `"hi!"`). ~1 с на простом скрипте. Несуществующий id → `KeyError: 'output'` |
-| `get_script_history(...)` | DataFrame: History Date, History Time, History Status, History Elapsed Time, History User, History Type, History Request Id; у непустого результата спереди ещё rowEntityLongId, rowLabel (`#299283 scr1`) |
-| `get_script_chain_history(...)` | То же для цепочек |
+| `get_script_list()` | `list[int]` с id скриптов |
+| `get_script_info(id)` | Одну строку из 16 колонок: rowEntityLongId, rowLabel (имя скрипта), Macros (исходный код), Folder, Scheduler, Lock Mode, Last Date, Last Time, Last Status, Memory Limit MB, Time Limit sec, Custom Offset, Comments, Production, Dev Complete, Id. Если скрипта нет, `None` |
+| `run_script(id)` | Ждёт, пока скрипт закончится, и возвращает его вывод строкой: `console.log("hi!")` превращается в `"hi!"`. На простом скрипте около секунды. С несуществующим id падает с `KeyError: 'output'` |
+| `get_script_history(...)` | DataFrame: History Date, History Time, History Status, History Elapsed Time, History User, History Type, History Request Id. Если история не пустая, спереди добавляются rowEntityLongId и rowLabel (`#299283 scr1`) |
+| `get_script_chain_history(...)` | То же для цепочек скриптов |
 
-- Фильтры истории `date_from`, `date_to`, `status`, `run_type`, `show_archive` работают.
-  Без `date_from` SDK сам подставляет «сутки назад».
-- **`identifiers=[...]` сервер отвергает:** `400 "The property identifiers is not defined"`. Для истории
-  одного скрипта фильтруйте DataFrame по `rowLabel`.
-- Запуск через `run_script` пишется в историю с типом `INTERFACE`, а не `API`.
-- `build_scripts_history_filter(...)` показывает фильтр, который уйдёт на сервер:
-  `{"type": "SCRIPTS_HISTORY_FILTER", "params": {"dateFrom": <unix сек>, "runType": 2, "status": 3, "showArchive": true}}`.
+Фильтры истории `date_from`, `date_to`, `status`, `run_type` и `show_archive` работают. Если
+`date_from` не передать, SDK сам подставит «сутки назад».
 
----
+Фильтр `identifiers=[...]` сервер не принимает: `400 "The property identifiers is not defined"`.
+Чтобы получить историю одного скрипта, берём общую историю и фильтруем DataFrame по `rowLabel`.
 
-## 10. Дашборды **[стенд]**
+Запуск через `run_script` попадает в историю с типом `INTERFACE`, а не `API`.
 
-| Метод | Возвращает |
+Если интересно, что именно уходит на сервер, можно вызвать `build_scripts_history_filter(...)`:
+
+```json
+{"type": "SCRIPTS_HISTORY_FILTER", "params": {"dateFrom": 1791724634, "runType": 2, "status": 3, "showArchive": true}}
+```
+
+## Дашборды
+
+| Метод | Что возвращает |
 |---|---|
-| `get_dashboard_multicube_links(dashboard_ids=None, request_delay=0.5, ignore_errors=True)` | DataFrame: dashboardId, optionId, objectIdentifier, type (`cube`), name, multicubeId, gridId, savedViewId, positionX/Y/W/H. ~7 с на 4 дашборда |
-| `get_dashboard_multicubes(dashboard_id)` | То же для одного дашборда, ~1,3 с |
-| `export_dashboard_multicube_links_grid()` | Грид 137000000080 (см. раздел 4) — **не связи дашбордов** |
+| `get_dashboard_multicube_links(dashboard_ids=None, request_delay=0.5, ignore_errors=True)` | DataFrame: dashboardId, optionId, objectIdentifier, type (`cube`), name, multicubeId, gridId, savedViewId, positionX/Y/W/H. На четырёх дашбордах около 7 с |
+| `get_dashboard_multicubes(dashboard_id)` | То же для одного дашборда, около 1,3 с |
+| `export_dashboard_multicube_links_grid()` | Грид 137000000080, который, как выяснилось, не про связи дашбордов |
 
-- По умолчанию `ignore_errors=True` молча пропускает дашборды без содержимого. С `False` вызов падает
-  на первом пустом дашборде (`нет definitionJsonString`).
-- **В модели без дашбордов** вызов без `dashboard_ids` бросает `404 "Не удалось автоматически найти
-  dashboard longId… Передайте dashboard_ids явно"`, а не возвращает пустой DataFrame.
+С `ignore_errors=True` (это значение по умолчанию) пустые дашборды молча пропускаются. С `False`
+вызов падает на первом пустом дашборде с ошибкой про `definitionJsonString`.
 
----
+Если в модели вообще нет дашбордов, вызов без `dashboard_ids` не вернёт пустой DataFrame, а упадёт
+с `404 "Не удалось автоматически найти dashboard longId… Передайте dashboard_ids явно"`.
 
-## 11. Оптимизация **[стенд]**
+## Оптимизация
 
-| Метод | Поведение |
+| Метод | Как себя ведёт |
 |---|---|
-| `get_optimizer_requests_grid()` и алиас `get_optimizer_requests()` | **Без параметра падают** (`400 viewDefinition not found`). Работают с `entity_default_view_entity_long_id=137000000051`: колонки optimizerRequestId, requestName, Optimizer Engine, Objectives, Variables, Constraints, Comments, Id |
-| `get_optimizer_request_fields(id, entity_default_view_entity_long_id=137000000051)` | Тоже требует параметр. Колонки optimizerRequestId, requestName, goals, variables, constraints |
-| `export_lp_mapping(id, path)` | На пустом запросе → `404 "не удалось получить идентификатор для скачивания LP файла"`. На заполненном запросе стендом не проверялся; по коду возвращает **имя** zip с `optimizer.lp` и `optimizer.map`, таймаут 5 мин **[код]** |
-| `import_solution_mapping(zip)` | Не проверялся. **Формат CSV решения не описан нигде** — остаётся открытым вопросом |
+| `get_optimizer_requests_grid()` и алиас `get_optimizer_requests()` | Без параметра падают с `400 viewDefinition not found`. С `entity_default_view_entity_long_id=137000000051` работают и отдают колонки optimizerRequestId, requestName, Optimizer Engine, Objectives, Variables, Constraints, Comments, Id |
+| `get_optimizer_request_fields(id, entity_default_view_entity_long_id=137000000051)` | Без того же параметра тоже падает. С ним отдаёт optimizerRequestId, requestName, goals, variables, constraints |
+| `export_lp_mapping(id, path)` | На пустом запросе: `404 "не удалось получить идентификатор для скачивания LP файла"`. Заполненного запроса в тестовой модели не было. По коду метод возвращает имя zip-файла с `optimizer.lp` и `optimizer.map`, а таймаут выгрузки зашит в 5 минут |
+| `import_solution_mapping(zip)` | Не проверяли. Формат CSV с решением нигде не описан, это главный открытый вопрос по оптимизации |
 
-LP из Optimacros содержит дефекты (голые переменные в Bounds, инвертированные границы, константа
-в цели). Перед сторонним солвером — `lp_preprocess.py` (файлы 07–08 проекта) **[код]**.
+LP, который выгружает Optimacros, содержит дефекты: голые переменные в Bounds, перевёрнутые границы,
+константу в цели. Перед сторонним солвером его нужно прогнать через `lp_preprocess.py`.
 
----
+## Бэкапы и управление моделью
 
-## 12. Бэкапы и управление моделью **[стенд]**
-
-| Метод | Поведение |
+| Метод | Как себя ведёт |
 |---|---|
-| `get_backup_list()` | DataFrame `BACKUPS_GRID`; `rowLabel` — короткий id (`#47329`), `rowEntityLongId` — длинный (41000047329) |
-| `get_backup_info(long_id)` | DataFrame из одной строки |
-| `get_backup("#47329")` | `bytes`, zip (130 КБ за 2 с). Короткий id со знаком `#` |
-| **`backup()`** | **Возвращает `None` мгновенно, новый бэкап в списке не появляется.** Похоже, не работает |
-| `recalculate()` | `True`, 0,7 с |
-| `stop()` | `True`, 1,7 с. Повторно на офлайн-модели — `False` (6,7 с). `is_offline` обновляется и у того же объекта |
+| `get_backup_list()` | DataFrame `BACKUPS_GRID`. В `rowLabel` короткий id (`#47329`), в `rowEntityLongId` длинный (41000047329) |
+| `get_backup_info(long_id)` | Одна строка того же грида |
+| `get_backup("#47329")` | `bytes` с zip-архивом, 130 КБ за 2 с. Нужен короткий id со знаком `#` |
+| `backup()` | Возвращает `None` мгновенно, а нового бэкапа в списке нет. Похоже, метод ничего не делает |
+| `recalculate()` | `True` за 0,7 с |
+| `stop()` | `True` за 1,7 с. Повторный вызов на остановленной модели возвращает `False` (6,7 с) |
 | Экспорт из остановленной модели | `AttributeError: 'NoneType' object has no attribute 'items'` |
-| `start()` | `True`, **22,6 с**. На онлайн-модели тоже `True` |
-| `restore()` | Не проверялся: без параметров неясно, из какого бэкапа он восстанавливает |
+| `start()` | `True`, но ждать приходится 22,6 с. На работающей модели тоже возвращает `True` |
+| `restore()` | Не проверяли. Параметров у метода нет, и непонятно, из какого бэкапа он восстанавливает |
 
----
+## Обходные пути
 
-## 13. Чего в SDK нет или что не работает: обходы
-
-| Задача | Как сделать |
+| Задача | Как решаем |
 |---|---|
-| DataFrame из мультикуба или вью | `export_df(sep=";")` или `export_om_file` + `pd.read_csv(sep=";")` |
+| DataFrame из мультикуба или вью | `export_df(sep=";")` или `export_om_file` и `pd.read_csv(sep=";")` |
 | Наполнить справочник | `add_elements(names=[...])` |
-| Выгрузка справочника в формате ОМ | `export_file(format=CSV)` или `export_df()` |
+| Выгрузить справочник | `export_file(format=CSV)` или `export_df()`, формат ОМ не работает |
 | Все формулы модели | `CUBES_GRID`, колонка `Formula` |
 | Исходный код скриптов | `get_script_info(id)["Macros"]` |
-| История одного скрипта | Общая история + фильтр по `rowLabel` |
+| История одного скрипта | Общая история и фильтр по `rowLabel` |
 | Id роли по имени | `PermissionGridExporter.export(137000000019).role_columns` |
 | Снять доступ к макросу | `change_macros_permission(id, role_id, False)` |
-| Связи дашборд → мультикуб | `get_dashboard_multicube_links()` с `ignore_errors=True` |
-| Отфильтрованная выгрузка | `export_om_file(boolean_cube_filter_long_id=…)` или `filter_formula="…"` |
-| Свойства справочника, подмножества времени | Через SDK не работают (`LIST_PROPERTIES_GRID`, `TIME_*_SUBSETS_GRID`) |
+| Связи дашбордов с мультикубами | `get_dashboard_multicube_links()` |
+| Выгрузка с фильтром | `export_om_file` с `boolean_cube_filter_long_id` или `filter_formula` |
+| Свойства справочника, подмножества времени | Через SDK не достать: `LIST_PROPERTIES_GRID` и `TIME_*_SUBSETS_GRID` не работают |
 | Создать мультикуб, куб, измерение, версию | Через SDK никак |
-| Произвольный action API | Методы коннектора (раздел 1) — недокументированный путь |
+| Action API, для которого нет метода | Методы коннектора, на свой страх и риск |
 
----
+## Что осталось непроверенным
 
-## 14. Ловушки (сводка)
-
-1. `mc.export_df()` / `view.export_df()` — одна колонка. Обход `sep=";"`.
-2. `catalog.import_file()` молча не добавляет элементы.
-3. `export_catalog` / `import_catalog` копируют не все элементы.
-4. `export_om_file` у справочника и его вью — 404.
-5. Экспорт в несуществующую папку — ни файла, ни ошибки.
-6. «Не найдено»: `None` или исключение, зависит от метода (раздел 2).
-7. Права на макрос: `"none"` отвергается, нужен `False`.
-8. Роль — только числовой id.
-9. `change_*_permission` и `start()` возвращают `True`, даже если ничего не поменялось.
-10. `get_script_history(identifiers=…)` — ошибка сервера.
-11. `get_optimizer_requests_grid()` и `get_optimizer_request_fields()` без `137000000051` падают.
-12. `exporter.export_many()` без аргументов падает целиком.
-13. `get_enabled_list_ids()` возвращает и справочники без UAM.
-14. `get_dashboard_multicube_links()` по умолчанию прячет ошибки; без дашбордов — 404.
-15. `run_script` с неверным id — `KeyError`, неверные id в фильтрах и запросы к остановленной
-    модели — `AttributeError`. Ловите `Exception`.
-16. `model.backup()` не создаёт бэкап.
-17. `ws.info()` не содержит список моделей.
-18. `OM_ZIP` — расширение `.gz`, внутри zip. `XLS` — на деле XLSX.
-19. Экспорт ОМ включает агрегаты времени (`FY21`, `YTD`) — отфильтруйте их перед обработкой.
-20. Пустой системный грид приходит без `rowEntityLongId` / `rowLabel`.
-21. `row_count` у гридов и `get_elements` — не лимит.
-22. Объекты SDK — снимки: после переименования старый объект отдаёт старое имя.
-23. Формулы-фильтры в `.env` пишите в двойных кавычках — `python-dotenv` молча пропускает строку с
-    одинарными кавычками внутри.
-
----
-
-## 15. Что осталось непроверенным
-
-- `export_lp_mapping` на заполненном оптимизационном запросе и `import_solution_mapping` (формат решения).
-- `change_cell_value` — смысл `dimension_id`.
+- `export_lp_mapping` на заполненном оптимизационном запросе и `import_solution_mapping` вместе
+  с форматом решения.
+- Что `change_cell_value` ждёт в `dimension_id`.
 - `restore()`.
-- Правильный `dimension_id` для фильтров `export_file`.
-- Поведение на Windows и на больших моделях.
+- Какой `dimension_id` нужен фильтрам `export_file`.
+- Windows и большие модели.
 
-## 16. Как перепроверить: стенд `sdk_probe.py`
+Если кто-то закроет один из этих вопросов, допишите сюда.
+
+## Как перепроверить
+
+Стенд [sdk_probe.py](https://github.com/dguzhavin/om-tools/blob/main/py-sdk-probe/sdk_probe.py) лежит
+в репозитории вместе с
+[.env.example](https://github.com/dguzhavin/om-tools/blob/main/py-sdk-probe/.env.example) и готовыми
+настройками для тестовой модели в
+[env_examples/](https://github.com/dguzhavin/om-tools/tree/main/py-sdk-probe/env_examples). Какие
+объекты нужно создать в тестовой модели, написано в
+[README](https://github.com/dguzhavin/om-tools/blob/main/py-sdk-probe/README.md), бэкап модели
+кладём в [model/](https://github.com/dguzhavin/om-tools/tree/main/py-sdk-probe/model).
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env    # заполнить
+cp .env.example .env    # вписать токен и тестовые объекты
 python sdk_probe.py     # первый прогон: OM_SKIP_WRITE=1, OM_TEST_ADMIN=0
 ```
 
-Результат в `OM_WORK_DIR`: `report.md` (таблица по всем вызовам), `report.json` (то же для машины),
-`results/*.csv` (полученные DataFrame), `export/<группа>/<вызов>/` (файлы каждого экспорта).
+Результат появится в папке из `OM_WORK_DIR`: `report.md` с таблицей по всем вызовам, `report.json`
+с тем же для машинной обработки, `results/*.csv` с полученными DataFrame и `export/<группа>/<вызов>/`
+с файлами каждого экспорта.
 
 | Переменная | По умолчанию | Что включает |
 |---|---|---|
-| `OM_SKIP_WRITE` | 1 | 0 = запись: временные справочники (удаляются), круговой импорт в мультикуб-приёмник с восстановлением, формулы, права и UAM с откатом, `run_script` |
-| `OM_TEST_ADMIN` | 0 | 1 = `recalculate`, `backup`, `stop` / `start` |
-| `OM_TEST_RESTORE` | 0 | 1 = `restore()` — откатывает модель |
-| `OM_GROUPS` | все | Запуск части групп |
+| `OM_SKIP_WRITE` | 1 | 0 включает запись: временные справочники (в конце удаляются), импорт в мультикуб-приёмник с восстановлением данных, формулы, права и UAM с откатом, `run_script` |
+| `OM_TEST_ADMIN` | 0 | 1 включает `recalculate`, `backup`, `stop` и `start` |
+| `OM_TEST_RESTORE` | 0 | 1 включает `restore()`, который откатывает модель |
+| `OM_GROUPS` | все группы | Позволяет запустить только часть групп |
 
-Запускать только на тестовой модели. При выходе новой версии SDK или Workspace прогон повторяется;
-расхождения с этой статьёй — повод её обновить.
+Гоняем стенд только на тестовой модели. Когда выйдет новая версия SDK или Workspace, стоит прогнать
+его заново и сравнить отчёты с этой статьёй.
